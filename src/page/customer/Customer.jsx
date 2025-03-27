@@ -4,7 +4,7 @@ import { Navigate } from "../../Navigate";
 import { TbFilter } from "react-icons/tb";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
-
+//dfd
 const Customer = () => {
   const items = [
     {
