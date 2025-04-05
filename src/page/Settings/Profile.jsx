@@ -99,7 +99,7 @@ const Profile = () => {
   return (
     <div className="p-1">
       <Navigate title={'Profile'}></Navigate>
-      <div className="bg-[#E5D0C8]">
+      <div className="">
       <div className="max-w-xl mx-auto mt-8 rounded-lg p-6 ">
       {/* Profile Picture Section */}
       <div className="text-center mb-6">

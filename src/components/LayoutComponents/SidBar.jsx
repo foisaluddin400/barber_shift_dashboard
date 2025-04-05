@@ -33,18 +33,47 @@ const items = [
     link: "/dashboard/customer",
   },
   {
+    key: "report",
+    label: "User Report",
+    icon: user,
+    link: "/dashboard/userReport",
+  },
+  {
+    key: "premium",
+    label: "Premium Subscribers",
+    icon: user,
+    link: "/dashboard/premiumSubscribers",
+  },
+  {
+    key: "admin",
+    label: "Administrator",
+    icon: user,
+    link: "/dashboard/admin",
+  },
+  {
     key: "barber",
     label: "Barber",
     icon: user,
     link: "/dashboard/barber",
   },
-  
+  {
+    key: "adPromotion",
+    label: "Ad Promotional",
+    icon: user,
+    link: "/dashboard/adPromotion",
+  },
   
   {
     key: "subscription",
     label: "Subscription",
     icon: subscription,
-    link: "/dashboard/Subscription",
+    link: "/dashboard/subscription",
+  },
+  {
+    key: "support",
+    label: "Support",
+    icon: subscription,
+    link: "/dashboard/support",
   },
   {
     key: "settings",

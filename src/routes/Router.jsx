@@ -24,6 +24,7 @@ import { Barber } from "../page/barber/Barber";
 import Customer from "../page/customer/Customer";
 import BarberDetailsPage from "../page/barber/BarberDetailsPage";
 import { BarberOwnerDetails } from "../page/barberOwner/BarberOwnerDetails";
+import UserReport from "../page/userReport/UserReport";
 
 
 export const router = createBrowserRouter([
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/customer",
         element: <Customer></Customer>
+      },
+      {
+        path: "/dashboard/userReport",
+        element: <UserReport></UserReport>
       },
 
 
