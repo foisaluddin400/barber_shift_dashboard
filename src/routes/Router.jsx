@@ -25,6 +25,9 @@ import Customer from "../page/customer/Customer";
 import BarberDetailsPage from "../page/barber/BarberDetailsPage";
 import { BarberOwnerDetails } from "../page/barberOwner/BarberOwnerDetails";
 import UserReport from "../page/userReport/UserReport";
+import PremiumSubscriber from "../page/premiumSubscriber/PremiumSubscriber";
+import Administrator from "../page/administrator/Administrator";
+import AdPromotional from "../page/adpromotion/AdPromotional";
 
 
 export const router = createBrowserRouter([
@@ -55,6 +58,20 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/userReport",
         element: <UserReport></UserReport>
+      },
+      {
+        path: "/dashboard/adPromotion",
+        element: <AdPromotional></AdPromotional>
+      },
+
+      {
+        path: "/dashboard/admin",
+        element: <Administrator></Administrator>
+      },
+
+      {
+        path: "/dashboard/premiumSubscribers",
+        element: <PremiumSubscriber></PremiumSubscriber>
       },
 
 
