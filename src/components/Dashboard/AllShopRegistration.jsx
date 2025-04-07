@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Table, Button, Modal } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
-const ShopRegistration = () => {
+import { Navigate } from "../../Navigate";
+const AllShopRegistration = () => {
     const [open, setOpen] = useState(false);
     const [selectedShop, setSelectedShop] = useState(null);
 
@@ -63,7 +63,7 @@ const ShopRegistration = () => {
             title: "Action",
             key: "action",
             render: () => (
-                <div className="">
+                <div className=" ">
                     <button type="primary" className="bg-[#D9F2DD] text-[#359742] rounded-full py-1 px-5">Accept</button>
                     
                 </div>
@@ -80,10 +80,7 @@ const ShopRegistration = () => {
     
     return (
         <div className="p-3 bg-white mt-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold pb-2">Shops Registration</h2>
-                <Link to={'/dashboard/allShop'}><button className="text-[#AB684D]">View all</button></Link>
-            </div>
+             <Navigate title={"all Shop Registration"} />
             <Table dataSource={dataSource} columns={columns} pagination={false} />
             
             <Modal
@@ -114,6 +111,6 @@ const ShopRegistration = () => {
             </Modal>
         </div>
     );
-};
+}
 
-export default ShopRegistration;
+export default AllShopRegistration

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Table, Button, Modal } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
+import { Table, Button, Modal, Input } from "antd";
+import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { Navigate } from "../../Navigate";
+import ReplyUser from "./ReplyUser";
 
-const ShopRegistration = () => {
+const Support = () => {
     const [open, setOpen] = useState(false);
     const [selectedShop, setSelectedShop] = useState(null);
-
+const [openAddModal, setOpenAddModal] = useState(false);
     const dataSource = [
         {
             key: "1",
@@ -63,7 +65,7 @@ const ShopRegistration = () => {
             title: "Action",
             key: "action",
             render: () => (
-                <div className="">
+                <div className=" ">
                     <button type="primary" className="bg-[#D9F2DD] text-[#359742] rounded-full py-1 px-5">Accept</button>
                     
                 </div>
@@ -76,14 +78,25 @@ const ShopRegistration = () => {
                 <Button onClick={() => { setSelectedShop(record); setOpen(true); }} shape="circle" icon={<EyeOutlined />} style={{ backgroundColor: "#016A70", color: "white" }} />
             ),
         },
+        {
+            title: "Reply",
+            key: "reply",
+            render: (record) => (
+                <button onClick={() => setOpenAddModal(true)} className="bg-red-500 border px-4 py-1 rounded">Reply</button>
+            ),
+        },
     ];
     
     return (
         <div className="p-3 bg-white mt-4">
-            <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold pb-2">Shops Registration</h2>
-                <Link to={'/dashboard/allShop'}><button className="text-[#AB684D]">View all</button></Link>
-            </div>
+             <div className="flex justify-between mb-4">
+        <Navigate title={"Support"} />
+        <Input
+          placeholder="Search"
+          prefix={<SearchOutlined />}
+          className="w-64 px-4 py-2 rounded-lg bg-white"
+        />
+      </div>
             <Table dataSource={dataSource} columns={columns} pagination={false} />
             
             <Modal
@@ -112,8 +125,9 @@ const ShopRegistration = () => {
                     </div>
                 )}
             </Modal>
+            <ReplyUser setOpenAddModal={setOpenAddModal} openAddModal={openAddModal}></ReplyUser>
         </div>
     );
-};
+}
 
-export default ShopRegistration;
+export default Support

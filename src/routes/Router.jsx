@@ -28,6 +28,8 @@ import UserReport from "../page/userReport/UserReport";
 import PremiumSubscriber from "../page/premiumSubscriber/PremiumSubscriber";
 import Administrator from "../page/administrator/Administrator";
 import AdPromotional from "../page/adpromotion/AdPromotional";
+import AllShopRegistration from "../components/Dashboard/AllShopRegistration";
+import Support from "../page/support/Support";
 
 
 export const router = createBrowserRouter([
@@ -46,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/barberOwner",
         element: <BarberOwner></BarberOwner>
+      },
+      {
+        path: "/dashboard/allShop",
+        element: <AllShopRegistration></AllShopRegistration>
       },
       {
         path: "/dashboard/barberOwner/barberDetails",
@@ -86,6 +92,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/Subscription",
         element: <Subscription></Subscription>,
+      },
+      {
+        path: "/dashboard/support",
+        element: <Support></Support>,
       },
       {
         path: "/dashboard/Settings/profile",
