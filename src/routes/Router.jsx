@@ -32,6 +32,7 @@ import AllShopRegistration from "../components/Dashboard/AllShopRegistration";
 import Support from "../page/support/Support";
 
 
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -74,6 +75,7 @@ export const router = createBrowserRouter([
         path: "/dashboard/admin",
         element: <Administrator></Administrator>
       },
+      
 
       {
         path: "/dashboard/premiumSubscribers",

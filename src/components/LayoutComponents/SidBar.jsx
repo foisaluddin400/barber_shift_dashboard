@@ -7,78 +7,84 @@ import user from "../../assets/routerImg/user.png";
 import logo from "../../assets/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { FaChevronRight } from "react-icons/fa";
-import { IoIosLogIn } from "react-icons/io";
+import { FaChevronRight, FaUserAstronaut, FaUserTie } from "react-icons/fa";
+import { IoIosLogIn, IoMdCut } from "react-icons/io";
 import { logout } from "../../page/redux/features/auth/authSlice";
 import { useDispatch } from "react-redux";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { TbUserCircle } from "react-icons/tb";
+import { MdOutlineReport, MdOutlineSettings, MdOutlineWorkspacePremium } from "react-icons/md";
+import { RiShieldUserLine } from "react-icons/ri";
+import { BsSubstack } from "react-icons/bs";
+import { HiSupport } from "react-icons/hi";
 
 const items = [
   {
     key: "dashboard",
     label: "Dashboard",
-    icon: dashboard,
+    icon: <LuLayoutDashboard />,
     link: "/",
   },
   {
     key: "barberOwner",
     label: "Barber owner",
-    icon: user,
+    icon: <FaUserTie />,
     link: "/dashboard/barberOwner",
   },
 
   {
     key: "customer",
     label: "Customer",
-    icon: user,
+    icon: <TbUserCircle />,
     link: "/dashboard/customer",
   },
   {
     key: "report",
     label: "User Report",
-    icon: user,
+    icon: <MdOutlineReport />,
     link: "/dashboard/userReport",
   },
   {
     key: "premium",
     label: "Premium Subscribers",
-    icon: user,
+    icon: <MdOutlineWorkspacePremium />,
     link: "/dashboard/premiumSubscribers",
   },
   {
     key: "admin",
     label: "Administrator",
-    icon: user,
+    icon: <RiShieldUserLine />,
     link: "/dashboard/admin",
   },
   {
     key: "barber",
     label: "Barber",
-    icon: user,
+    icon: <IoMdCut />,
     link: "/dashboard/barber",
   },
   {
     key: "adPromotion",
     label: "Ad Promotional",
-    icon: user,
+    icon: <FaUserAstronaut />,
     link: "/dashboard/adPromotion",
   },
   
   {
     key: "subscription",
     label: "Subscription",
-    icon: subscription,
+    icon: <BsSubstack />,
     link: "/dashboard/subscription",
   },
   {
     key: "support",
     label: "Support",
-    icon: subscription,
+    icon: <HiSupport />,
     link: "/dashboard/support",
   },
   {
     key: "settings",
     label: "Settings",
-    icon: settings,
+    icon: <MdOutlineSettings />,
     link: "/dashboard/Settings/profile",
     children: [
       {
@@ -199,9 +205,8 @@ const SidBar = () => {
                   }
                 }}
               >
-                <img src={item.icon} alt={item.label} className="w-5 h-5 mr-3" />
+                <h1 className="mr-3">{item.icon}</h1>
                 <span className="block w-full ">{item.label}</span>
-
                 {/* Show dropdown arrow if children exist */}
                 {item.children && (
                   <FaChevronRight
