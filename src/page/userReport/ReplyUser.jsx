@@ -33,21 +33,13 @@ const ReplyUser = ({openAddModal,setOpenAddModal}) => {
           >
             <Input.TextArea placeholder="Enter Reply" rows={4} />
           </Form.Item>
-
-          {/* Services Selection */}
-          
-
-        
-          {/* Buttons */}
           <div className="flex gap-3 mt-3">
           <button
               type="submit"
               className="px-4 py-3 w-full bg-[#D17C51] text-white rounded-md"
              
             >
-              
                 Reply
-            
             </button>
           <button
               type="button"
@@ -56,7 +48,6 @@ const ReplyUser = ({openAddModal,setOpenAddModal}) => {
             >
               Cancel
             </button>
-           
           </div>
         </Form>
       </div>
@@ -65,3 +56,5 @@ const ReplyUser = ({openAddModal,setOpenAddModal}) => {
 }
 
 export default ReplyUser
+
+           

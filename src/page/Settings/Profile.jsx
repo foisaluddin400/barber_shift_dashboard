@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Avatar, Upload, Form, Input, Button, message } from "antd";
+import { useState } from "react";
+import {  Form, Input } from "antd";
 import { IoCameraOutline } from "react-icons/io5";
 import { PasswordTab } from "./PasswordTab";
 import { Navigate } from "../../Navigate";
@@ -13,9 +13,6 @@ const Profile = () => {
 
   const [form] = Form.useForm();
   const [image, setImage] = useState();
-
-
-  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
