@@ -149,6 +149,7 @@ export const Barber = () => {
               dataSource={data}
               pagination={false}
               rowClassName=" border-b border-gray-300"
+              scroll={{ x: 800 }} 
             />
           </div>
         </div>

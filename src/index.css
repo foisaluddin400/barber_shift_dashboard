@@ -4,6 +4,9 @@
 
 
 
+.shadowc:hover{
+  transform: scale(1.1);
+}
 
 .children-menu {
   overflow: hidden;
@@ -112,7 +115,7 @@ select option {
 }
 
 .custom-tabs .ant-tabs-ink-bar {
-  background-color: red !important; /* Active ট্যাবের নিচের বর্ডার লাল হবে */
+  background-color: red !important; 
 }
 
 
@@ -121,17 +124,26 @@ select option {
 }
 
 .custom-tabs .ant-tabs-tab-btn:hover {
-  color: inherit !important; /* ট্যাবের বাটনের hover রঙ রিমুভ */
+  color: inherit !important; 
 }
 
 
 .custom-tabs .ant-tabs-tab {
-  border-bottom: none !important; /* প্রতিটি ট্যাবের নিচে থাকা বর্ডার রিমুভ */
+  border-bottom: none !important; 
 }
 
 .custom-tabs .ant-tabs-tab-active {
-  border-bottom: 2px solid red !important; /* শুধুমাত্র অ্যাক্টিভ ট্যাবের জন্য বর্ডার */
+  border-bottom: 2px solid red !important;
 }
+
+
+
+
+
+
+
+
+
 
 
 

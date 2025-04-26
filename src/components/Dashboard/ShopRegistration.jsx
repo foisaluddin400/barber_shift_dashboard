@@ -84,7 +84,7 @@ const ShopRegistration = () => {
                 <h2 className="text-lg font-semibold pb-2">Shops Registration</h2>
                 <Link to={'/dashboard/allShop'}><button className="text-[#AB684D]">View all</button></Link>
             </div>
-            <Table dataSource={dataSource} columns={columns} pagination={false} />
+            <Table dataSource={dataSource} columns={columns} pagination={false} scroll={{ x: 900 }} />
             
             <Modal
                 title="Shop Details"

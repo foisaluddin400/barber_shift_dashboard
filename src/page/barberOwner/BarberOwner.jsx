@@ -162,8 +162,8 @@ const BarberOwner = () => {
   return (
     <div className="p-1">
       <div className="flex ">
-        <Navigate title={"Shops"}></Navigate>
-        <h1 className=" pl-2 font-semibold text-xl">(110)</h1>
+        <Navigate title={"Barber Owner"}></Navigate>
+        
       </div>
       {/* Filter and Searc */}
       <div className="p-2">
@@ -196,6 +196,7 @@ const BarberOwner = () => {
             dataSource={data}
             pagination={false}
             rowClassName=" border-b border-gray-300"
+            scroll={{ x: 800 }} 
           />
         </div>
       </div>

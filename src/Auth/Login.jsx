@@ -2,6 +2,7 @@
 import { Checkbox, Form, Input, message } from "antd";
 import img from '../assets/header/auth.png'
 import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 const Login = () => {
   
   const onFinish = async (values) => {
@@ -24,9 +25,13 @@ const Login = () => {
      
    
     // }
+
 };
 
-  
+
+
+
+
   return (
     <div className="min-h-screen grid grid-cols-2 bg-[#F7F0ED]">
      
@@ -113,6 +118,7 @@ const Login = () => {
         <img className="h-screen w-full" src={img} alt="" />
       </div>
     </div>
+    
   );
 };
 

@@ -81,7 +81,7 @@ const AllShopRegistration = () => {
     return (
         <div className="p-3 bg-white mt-4">
              <Navigate title={"all Shop Registration"} />
-            <Table dataSource={dataSource} columns={columns} pagination={false} />
+            <Table dataSource={dataSource} columns={columns} pagination={false} scroll={{ x: 800 }} />
             
             <Modal
                 title="Shop Details"

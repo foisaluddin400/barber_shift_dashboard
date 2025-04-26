@@ -41,9 +41,7 @@ export const PasswordTab = () => {
   return (
     <div>
     <Form layout="vertical" onFinish={handlePasswordChange}>
-      <h2 className="text-xl font-semibold mb-4 text-center">
-        Change Your Password
-      </h2>
+    
 
       <Form.Item
         name="oldPassword"

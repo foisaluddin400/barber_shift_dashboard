@@ -7,7 +7,11 @@ import { logout } from "../../page/redux/features/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { TbUserCircle } from "react-icons/tb";
-import { MdOutlineReport, MdOutlineSettings, MdOutlineWorkspacePremium } from "react-icons/md";
+import {
+  MdOutlineReport,
+  MdOutlineSettings,
+  MdOutlineWorkspacePremium,
+} from "react-icons/md";
 import { RiShieldUserLine } from "react-icons/ri";
 import { BsSubstack } from "react-icons/bs";
 import { HiSupport } from "react-icons/hi";
@@ -62,7 +66,7 @@ const items = [
     icon: <FaUserAstronaut />,
     link: "/dashboard/adPromotion",
   },
-  
+
   {
     key: "subscription",
     label: "Subscription",
@@ -101,7 +105,6 @@ const items = [
         label: "FAQ",
         link: "/dashboard/Settings/FAQ",
       },
-      
     ],
   },
 ];
@@ -158,13 +161,12 @@ const SidBar = () => {
 
   return (
     <div className="custom-sidebar h-[100vh] bg-[#AB684D]">
-      
       <div className="custom-sidebar-logo flex justify-center">
         <div>
-        <div className="flex justify-center">
-        <img src={logo} alt="Logo" className="w-[40px]" />
-        </div>
-        <h1 className="text-white italic">Barber Time</h1>
+          <div className="flex justify-center">
+            <img src={logo} alt="Logo" className="w-[40px]" />
+          </div>
+          <h1 className="text-white italic">Barber Time</h1>
         </div>
       </div>
       <div className="menu-items">
@@ -186,14 +188,17 @@ const SidBar = () => {
               <Link
                 to={item.link}
                 className={`menu-item my-4 mx-3 py-3 px-3 flex items-center cursor-pointer ${
-                  selectedKey === item.key || isSettingsActive || isCreatorActive || isCategoriesActive
+                  selectedKey === item.key ||
+                  isSettingsActive ||
+                  isCreatorActive ||
+                  isCategoriesActive
                     ? "bg-[#D17C51] text-[white] rounded-tr-md rounded-br-md"
                     : "bg-white text-[#AB684D] rounded-tr-md rounded-br-md hover:bg-gray-200"
                 }`}
                 onClick={(e) => {
                   if (item.children) {
-                    e.preventDefault(); 
-                    onParentClick(item.key); 
+                    e.preventDefault();
+                    onParentClick(item.key);
                   } else {
                     setSelectedKey(item.key);
                   }

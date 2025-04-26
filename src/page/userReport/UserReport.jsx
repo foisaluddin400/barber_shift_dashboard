@@ -156,6 +156,7 @@ const UserReport = () => {
             rowSelection={rowSelection}
             pagination={false}
             rowClassName="border-b border-gray-200"
+            scroll={{ x: 900 }} 
           />
         </div>
       </div>

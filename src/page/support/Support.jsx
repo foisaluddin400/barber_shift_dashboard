@@ -25,7 +25,7 @@ const Support = () => {
       branchCode: "4575467",
       branchCity: "New York",
       city: "Us",
-      image: "https://via.placeholder.com/40",
+      image: "http://10.0.60.189:5000/uploads/360_F_238084232_5XhGUddDZezzJxybvVXzfPp8cOKAuqRp.jpg",
     },
   ];
 
@@ -114,7 +114,7 @@ const Support = () => {
           className="w-64 px-4 py-2 rounded-lg bg-white"
         />
       </div>
-      <Table dataSource={dataSource} columns={columns} pagination={false} />
+      <Table dataSource={dataSource} columns={columns} pagination={false} scroll={{ x: 900 }} />
 
       <Modal
         title="Shop Details"
@@ -167,6 +167,9 @@ const Support = () => {
           </div>
         )}
       </Modal>
+
+
+     
       <ReplyUser
         setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}

@@ -10,57 +10,90 @@ import create from "../../assets/routerImg/create.png";
 import settings from "../../assets/routerImg/settings.png";
 import subscription from "../../assets/routerImg/subscription.png";
 import user from "../../assets/routerImg/user.png";
-import logo from "../../assets/header/logo.png";
+import logo from "../../assets/logo.png";
 
-import { FaChevronRight } from "react-icons/fa";
-import { IoIosLogIn } from "react-icons/io";
+import { FaChevronRight, FaUserAstronaut, FaUserTie } from "react-icons/fa";
+import { IoIosLogIn, IoMdCut } from "react-icons/io";
+import { logout } from "../../page/redux/features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { TbUserCircle } from "react-icons/tb";
+import {
+  MdOutlineReport,
+  MdOutlineSettings,
+  MdOutlineWorkspacePremium,
+} from "react-icons/md";
+import { RiShieldUserLine } from "react-icons/ri";
+import { BsSubstack } from "react-icons/bs";
+import { HiSupport } from "react-icons/hi";
+
 const items = [
   {
     key: "dashboard",
     label: "Dashboard",
-    icon: dashboard,
+    icon: <LuLayoutDashboard />,
     link: "/",
   },
   {
-    key: "userManagement",
-    label: "User Management",
-    icon: user,
-    link: "/dashboard/UserManagement",
+    key: "barberOwner",
+    label: "Barber owner",
+    icon: <FaUserTie />,
+    link: "/dashboard/barberOwner",
+  },
+
+  {
+    key: "customer",
+    label: "Customer",
+    icon: <TbUserCircle />,
+    link: "/dashboard/customer",
   },
   {
-    key: "creatorManagement",
-    label: "Creator Management",
-    icon: create,
-    link: "/dashboard/CreatorManagement",
+    key: "report",
+    label: "User Report",
+    icon: <MdOutlineReport />,
+    link: "/dashboard/userReport",
   },
   {
-    key: "categoriesManagement",
-    label: "Categories Management",
-    icon: categorie,
-    link: "/dashboard/CategoriesManagement/Categories",
-    children: [
-      {
-        key: "categoriesManagement",
-        label: "Categories",
-        link: "/dashboard/CategoriesManagement/Categories",
-      },
-      {
-        key: "subcategory",
-        label: "Subcategory",
-        link: "/dashboard/CategoriesManagement/Subcategory",
-      },
-    ],
+    key: "premium",
+    label: "Premium Subscribers",
+    icon: <MdOutlineWorkspacePremium />,
+    link: "/dashboard/premiumSubscribers",
   },
+  {
+    key: "admin",
+    label: "Administrator",
+    icon: <RiShieldUserLine />,
+    link: "/dashboard/admin",
+  },
+  {
+    key: "barber",
+    label: "Barber",
+    icon: <IoMdCut />,
+    link: "/dashboard/barber",
+  },
+  {
+    key: "adPromotion",
+    label: "Ad Promotional",
+    icon: <FaUserAstronaut />,
+    link: "/dashboard/adPromotion",
+  },
+
   {
     key: "subscription",
     label: "Subscription",
-    icon: subscription,
-    link: "/dashboard/Subscription",
+    icon: <BsSubstack />,
+    link: "/dashboard/subscription",
   },
   {
-    key: "profile",
+    key: "support",
+    label: "Support",
+    icon: <HiSupport />,
+    link: "/dashboard/support",
+  },
+  {
+    key: "settings",
     label: "Settings",
-    icon: settings,
+    icon: <MdOutlineSettings />,
     link: "/dashboard/Settings/profile",
     children: [
       {
@@ -91,10 +124,8 @@ const Header = () => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [expandedKeys, setExpandedKeys] = useState([]);
   const navigate = useNavigate();
- 
 
   const contentRef = useRef({});
-  
 
   const onParentClick = (key) => {
     setExpandedKeys((prev) =>
@@ -152,41 +183,41 @@ const Header = () => {
               open={open}
               key={placement}
             >
-              <div className="bg-black h-screen -m-6">
-                <div className="custom-sidebar-logo flex justify-center ">
-                  <img src={logo} alt="Logo" className="w-[160px]" />
-                </div>
+              <div className="bg-[#AB684D] h-screen -m-6">
+              <div className="custom-sidebar-logo flex justify-center">
+        <div>
+          <div className="flex justify-center">
+            <img src={logo} alt="Logo" className="w-[40px]" />
+          </div>
+          <h1 className="text-white italic">Barber Time</h1>
+        </div>
+      </div>
 
                 <div className="menu-items">
-                {items.map((item) => (
+                  {items.map((item) => (
                     <div key={item.key}>
                       <Link
                         to={item.link}
                         className={`menu-item my-4 mx-5 py-3 px-3 flex items-center cursor-pointer ${
                           selectedKey === item.key
-                            ? "bg-[#EDC4C5] rounded-md"
-                            : "bg-white rounded-md hover:bg-gray-200"
+                         ? "bg-[#D17C51] text-[white] rounded-tr-md rounded-br-md"
+                    : "bg-white text-[#AB684D] rounded-tr-md rounded-br-md hover:bg-gray-200"
                         }`}
                         onClick={(e) => {
                           if (item.children) {
-                            e.preventDefault(); 
-                            onParentClick(item.key); 
+                            e.preventDefault();
+                            onParentClick(item.key);
                           } else {
                             setSelectedKey(item.key);
-                            onClose(); 
+                            onClose();
                           }
                         }}
                       >
-                        <img
-                          src={item.icon}
-                          alt={item.label}
-                          className="w-5 h-5 mr-3"
-                        />
-                        <span className="block w-full text-black">
+                         <h1 className="mr-3">{item.icon}</h1>
+                        <span className="block w-full ">
                           {item.label}
                         </span>
 
-                        
                         {item.children && (
                           <FaChevronRight
                             className={`ml-auto transform transition-all duration-300 ${
@@ -220,7 +251,7 @@ const Header = () => {
                                   : "hover:bg-gray-200"
                               }`}
                               onClick={() => {
-                                setSelectedKey(child.key); 
+                                setSelectedKey(child.key);
                                 setExpandedKeys([]); // Collapse all expanded items
                                 onClose(); // Close the drawer navigation
                               }}
@@ -236,8 +267,7 @@ const Header = () => {
                   ))}
                 </div>
 
-               
-                <div className="custom-sidebar-footer absolute bottom-0 w-full p-4 ">
+                <div className=" bottom-0 w-full p-4 ">
                   <button
                     onClick={handleLogout}
                     className="w-full flex bg-white text-start rounded-md text-black p-3"
@@ -266,7 +296,7 @@ const Header = () => {
                 />
               </div>
               <div className="text-end">
-                <h3>{ "Loading..."}</h3>
+                <h3>{"Loading..."}</h3>
                 <h4 className="text-sm">Admin</h4>
               </div>
             </div>

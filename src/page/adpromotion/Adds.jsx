@@ -92,6 +92,7 @@ const Adds = ({setEditModal}) => {
         dataSource={data}
         pagination={false}
         rowClassName="border-b border-gray-200"
+        scroll={{ x: 600 }} 
       />
       
     </div>

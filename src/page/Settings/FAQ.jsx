@@ -29,7 +29,7 @@ const FAQ = () => {
     <div className=" p-1">
       <Navigate title={'FAQ'}></Navigate>
 
-      <div className="grid grid-cols-2 gap-5 mt-2">
+      <div className="lg:grid grid-cols-2 gap-5 mt-2">
         {faqData.map((faq, i) => (
           <div key={faq._id} className="p-2">
             <p className="pb-3">Question no: {i + 1}</p>

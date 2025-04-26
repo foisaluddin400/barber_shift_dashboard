@@ -162,6 +162,7 @@ const Subscription = () => {
               dataSource={data}
               pagination={false}
               rowClassName=" border-b border-gray-300"
+              scroll={{ x: 750 }} 
             />
           </div>
         </div>
