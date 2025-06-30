@@ -14,7 +14,7 @@ const AdPromotional = () => {
       <div className="flex justify-between">
         <div className="flex ">
           <Navigate title={"Ad Promotion"}></Navigate>
-          <h1 className=" pl-2 font-semibold text-xl">{`(110)`}</h1>
+    
         </div>
         <button
         onClick={() => setOpenAddModal(true)}
