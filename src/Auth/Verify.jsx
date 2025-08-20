@@ -1,27 +1,31 @@
 import { useState } from "react";
 import OTPInput from "react-otp-input";
 import img from '../assets/header/auth.png'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { message } from "antd";
+import { useVerifyOtpMutation } from "../page/redux/api/userApi";
 
 const Verify = () => {
   const [otp, setOtp] = useState("");
+  const [verifyOtp] = useVerifyOtpMutation()
+   const navigate = useNavigate()
   const handleVerify = async () => {
-    // const data = {
-    //   code: otp,
-    //   email: localStorage.getItem("email"),
-    // };
+    const data = {
+        otp: Number(otp),
+      email: localStorage.getItem("email"),
+    };
 
    
 
-    // try {
-    //   const response = await verifyOtp({data}).unwrap();
+    try {
+      const response = await verifyOtp({data}).unwrap();
     
-    //   message.success(response?.message);
-    //   navigate("/reset");
-    // } catch (error) {
-    //   console.error(error); // Debugging: log error response
-    //   message.error(error?.data?.message );
-    // }
+      message.success(response?.message);
+      navigate("/reset");
+    } catch (error) {
+      console.error(error); 
+      message.error(error?.data?.message );
+    }
   };
 
   // const handleResend =async () => {
@@ -66,12 +70,12 @@ const Verify = () => {
               />
             </div>
 
-            <Link to={'/reset'}><button
+           <button
               onClick={handleVerify}
               className="w-full py-2 bg-[#D17C51] text-white rounded-md mb-4"
             >
               Verify Code
-            </button></Link>
+            </button>
 
             <span className="flex justify-center ">
               You have not received the email?{" "}

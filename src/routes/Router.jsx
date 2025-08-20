@@ -30,6 +30,7 @@ import Administrator from "../page/administrator/Administrator";
 import AdPromotional from "../page/adpromotion/AdPromotional";
 import AllShopRegistration from "../components/Dashboard/AllShopRegistration";
 import Support from "../page/support/Support";
+import ProtectedRoute from "../protectedRoute/ProtectedRoute";
 
 
 
@@ -38,7 +39,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: (
      
-        <DashboardLayout></DashboardLayout>
+       <ProtectedRoute><DashboardLayout></DashboardLayout></ProtectedRoute>
       
     ),
     children: [

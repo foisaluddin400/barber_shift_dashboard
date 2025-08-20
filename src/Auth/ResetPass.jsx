@@ -1,23 +1,31 @@
 import { Checkbox, Form, Input, message } from "antd";
 import img from '../assets/header/auth.png'
+import { useNavigate } from "react-router-dom";
+import { useResetPasswordMutation } from "../page/redux/api/userApi";
 const ResetPass = () => {
+
+   const navigate = useNavigate()
+     const [resetPassword] = useResetPasswordMutation()
+
+
+
   const onFinish = async (values) => {
+    
     console.log(values);
 
-    // const data = {
-    //   email: localStorage.getItem("email"),
-    //   newPassword: values?.password,
-    //   confirmPassword: values?.confirmPassword,
-    // };
+    const data = {
+      email: localStorage.getItem("email"),
+      password: values?.password,
+   
+    };
 
-    // try {
-    //   const result = await resetPassword({ data, email: data.email }).unwrap();
-
-    //   message.success(result?.message);
-    //   navigate("/login");
-    // } catch (error) {
-    //   message.error(error?.data?.message || "Error resetting password.");
-    // }
+    try {
+      const result = await resetPassword({ data }).unwrap();
+      message.success(result?.message);
+      navigate("/login");
+    } catch (error) {
+      message.error(error?.data?.message || "Error resetting password.");
+    }
   };
   return (
     <div className="min-h-screen grid grid-cols-2 bg-[#F7F0ED]">

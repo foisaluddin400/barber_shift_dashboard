@@ -1,30 +1,37 @@
 
 import { Checkbox, Form, Input, message } from "antd";
 import img from '../assets/header/auth.png'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { useLoginAdminMutation } from "../page/redux/api/userApi";
+import { setToken } from "../page/redux/features/auth/authSlice";
+import { useDispatch } from "react-redux";
 const Login = () => {
-  
+  const [loginAdmin] = useLoginAdminMutation()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
   const onFinish = async (values) => {
     console.log(values)
-    // try {
+    try {
      
-    //   const payload = await loginAdmin(values).unwrap();
-     
-    //   if (payload?.success) {
-    //     dispatch(setToken(payload?.data?.accessToken))
-    //     message.success("Login successful!");
-    //     navigate("/");
-    //   } else {
-    //     message.error(payload?.message || "Login failed!");
-    //   }
-    // } catch (error) {
-    //   console.error("Login error:", error);
-    //   message.error(error?.data?.message || "Something went wrong. Try again!");
-    // } finally {
+      const payload = await loginAdmin(values).unwrap();
+     console.log(payload)
+      if (payload?.success) {
+       
+        dispatch(setToken(payload?.data?.accessToken))
+        message.success(payload?.message);
+        navigate("/");
+      } else {
+        message.error(payload?.message || "Login failed!");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      message.error(error?.data?.message || "Something went wrong. Try again!");
+    } finally {
      
    
-    // }
+    }
 
 };
 
