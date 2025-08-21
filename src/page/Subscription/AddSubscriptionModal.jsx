@@ -1,18 +1,36 @@
-import { Form, Input, Modal, Select } from 'antd';
-import React, { useState } from 'react'
+import { Form, Input, message, Modal, Select } from "antd";
+import React, { useState } from "react";
+import { useAddSubscriptionMutation } from "../redux/api/manageApi";
 
-export const AddSubscriptionModal = ({openAddModal,setOpenAddModal}) => {
-    const [fileList, setFileList] = useState([]); 
-    const [form] = Form.useForm();
-    const handleCancel = () => {
-        form.resetFields();
-        setFileList([]);
-        setOpenAddModal(false);
-      };
+export const AddSubscriptionModal = ({ openAddModal, setOpenAddModal }) => {
+  const [addSubscription] = useAddSubscriptionMutation();
 
-      const handleSubmit = async (values) => {
-       console.log(values)
-      };
+  const [form] = Form.useForm();
+  const handleCancel = () => {
+    form.resetFields();
+
+    setOpenAddModal(false);
+  };
+
+  const handleSubmit = async (values) => {
+    console.log(values);
+    const data = {
+      duration: values?.duration,
+      price: Number(values?.price),
+      description: values?.description,
+      title: values?.title,
+    };
+    console.log(data);
+    try {
+      const response = await addSubscription(data).unwrap();
+
+      message.success(response?.message);
+      setOpenAddModal(false);
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message);
+    }
+  };
   return (
     <Modal
       centered
@@ -27,8 +45,10 @@ export const AddSubscriptionModal = ({openAddModal,setOpenAddModal}) => {
           {/* Package Name */}
           <Form.Item
             label="Subscription Plan Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter the package name" }]}
+            name="title"
+            rules={[
+              { required: true, message: "Please enter the package name" },
+            ]}
           >
             <Input className="py-2" placeholder="Enter package name" />
           </Form.Item>
@@ -51,9 +71,10 @@ export const AddSubscriptionModal = ({openAddModal,setOpenAddModal}) => {
               placeholder="Duration"
               optionFilterProp="label"
               options={[
-                { value: "yearly", label: "Yearly" },
-                { value: "monthly", label: "Monthly" },
-               
+                { value: "WEEKLY", label: "Weekly" },
+                { value: "MONTHLY", label: "Monthly" },
+                { value: "YEARLY", label: "Yearly" },
+                { value: "LIFETIME", label: "Life Time" },
               ]}
             />
           </Form.Item>
@@ -61,38 +82,34 @@ export const AddSubscriptionModal = ({openAddModal,setOpenAddModal}) => {
           {/* Description */}
           <Form.Item
             label="Point Range"
-            name="descriptions"
-            rules={[{ required: true, message: "Please enter the description" }]}
+            name="description"
+            rules={[
+              { required: true, message: "Please enter the description" },
+            ]}
           >
             <Input.TextArea placeholder="Enter description" rows={4} />
           </Form.Item>
 
           {/* Services Selection */}
-          
 
-        
           {/* Buttons */}
           <div className="flex gap-3 mt-4">
-          <button
+            <button
               type="submit"
               className="px-4 py-3 w-full bg-[#D17C51] text-white rounded-md"
-             
             >
-              
-                Add
-            
+              Add
             </button>
-          <button
+            <button
               type="button"
               className="px-4 py-3 w-full bg-[#D9000A] text-white rounded-md"
               onClick={handleCancel}
             >
               Cancel
             </button>
-           
           </div>
         </Form>
       </div>
     </Modal>
-  )
-}
+  );
+};

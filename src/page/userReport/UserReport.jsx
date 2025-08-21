@@ -1,27 +1,48 @@
-import React, { useState } from 'react';
-import { Navigate } from '../../Navigate';
-import { Table, Input, Dropdown, Tag, Button } from "antd";
+import React, { useState, useMemo } from "react";
+import { Navigate } from "../../Navigate";
+import { Table, Input, Tag } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { IoIosArrowDown } from "react-icons/io";
-import { Link } from "react-router-dom";
-import ReplyUser from './ReplyUser';
+import ReplyUser from "./ReplyUser";
+import { useGetAllReportsQuery } from "../redux/api/manageApi";
+
 
 const UserReport = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
-  const items = [
-    { label: <button>Blocked</button>, key: "0" },
-    { label: <button>Active</button>, key: "1" },
-    { label: <button>All Customers</button>, key: "2" },
-  ];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  console.log(selectedUser)
+  // API Call
+  const { data: reportData, isLoading } = useGetAllReportsQuery();
 
+  // data mapping for table
+  const tableData = useMemo(() => {
+    if (!reportData?.data) return [];
+    return reportData.data.map((item, index) => ({
+      key: item.reportId,
+      id:item.userId,
+      fullName: item.userName,
+      contact: item.userPhoneNumber
+        ? `${item.userPhoneNumber}`
+        : "No contact",
+      region: item.userAddress || "N/A",
+      status: item.status,
+      message: item.message,
+      type: item.type,
+    }));
+  }, [reportData]);
+
+    const handleEdit = (record) => {
+    setSelectedUser(record);
+    setOpenAddModal(true);
+  };
   const columns = [
     {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: "fullName",
       render: (text, record) => (
         <div>
           <div className="font-semibold">{record.fullName}</div>
-          <div className="text-xs text-gray-500">{record.name}</div>
+          <div className="text-xs text-gray-500">{record.message}</div>
         </div>
       ),
     },
@@ -32,135 +53,81 @@ const UserReport = () => {
     {
       title: "Region",
       dataIndex: "region",
-      render: () => <span className="text-gray-400">Image blur</span>
+      render: (text) => (
+        <span className="text-gray-500">{text || "Not provided"}</span>
+      ),
     },
     {
       title: "Status",
       dataIndex: "status",
       render: (status) => {
-        let color = status === 'Active' ? 'green' : 'red';
+        const color =
+          status === "ACTIVE"
+            ? "green"
+            : status === "CLOSED"
+            ? "volcano"
+            : "blue";
         return (
-          <Tag color={status === "Active" ? "green" : "volcano"} className="rounded-full px-3">
+          <Tag color={color} className="rounded-full px-3">
             {status}
           </Tag>
         );
-      }
+      },
     },
     {
       title: "Action",
       dataIndex: "action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex gap-2">
-          <button onClick={() => setOpenAddModal(true)} className="bg-red-500 border px-4 py-1 rounded">Reply</button>
-          <button className="bg-green-600 px-4 py-1 border rounded">Argon</button>
+          <button
+            onClick={() => handleEdit(record)}
+            className="bg-red-500 border px-4 py-1 rounded text-white"
+          >
+            Reply
+          </button>
+          <button className="bg-green-600 px-4 py-1 border rounded text-white">
+            Argon
+          </button>
         </div>
       ),
-    }
-  ];
-
-  const data = [
-    {
-      key: "1",
-      name: "Flores",
-      fullName: "Albert Flores",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Active",
-    },
-    {
-      key: "2",
-      name: "Warren",
-      fullName: "Wade Warren",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Active",
-    },
-    {
-      key: "3",
-      name: "Richards",
-      fullName: "Ronald Richards",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Inactive",
-    },
-    {
-      key: "4",
-      name: "Bell",
-      fullName: "Jerome Bell",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Active",
-    },
-    {
-      key: "5",
-      name: "Jacob",
-      fullName: "Jacob Jones",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Active",
-    },
-    {
-      key: "6",
-      name: "Marvin",
-      fullName: "Marvin McKinney",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Active",
-    },
-    {
-      key: "7",
-      name: "Williamson",
-      fullName: "Cameron Williamson",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Inactive",
-    },
-    {
-      key: "8",
-      name: "Howard",
-      fullName: "Esther Howard",
-      contact: "flores@mail.com (+62) 21-1234-5678",
-      status: "Inactive",
     },
   ];
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`Selected keys: ${selectedRowKeys}`, selectedRows);
-    },
-  };
 
   return (
     <div className="p-1">
       <div className="flex justify-between">
         <div className="flex">
           <Navigate title={"User Report"} />
-          <h1 className="pl-2 font-semibold text-xl">{`(110)`}</h1>
+          <h1 className="pl-2 font-semibold text-xl">
+            {`(${reportData?.meta?.total || 0})`}
+          </h1>
         </div>
         <Input
           placeholder="Search"
           prefix={<SearchOutlined />}
           className="w-64 px-4 py-2 rounded-lg bg-white"
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       <div className="p-2">
-        <div className="flex justify-between items-center mb-4">
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <button
-              className="flex gap-2 items-center border text-[#9C5F46] border-[#D17C51] p-1 px-3 rounded"
-              onClick={(e) => e.preventDefault()}
-            >
-              All Customers <IoIosArrowDown />
-            </button>
-          </Dropdown>
-        </div>
-
         <div className="rounded-md overflow-hidden">
           <Table
             columns={columns}
-            dataSource={data}
-            rowSelection={rowSelection}
+            dataSource={tableData}
+            loading={isLoading}
             pagination={false}
             rowClassName="border-b border-gray-200"
-            scroll={{ x: 900 }} 
+            scroll={{ x: 900 }}
           />
         </div>
       </div>
-      <ReplyUser setOpenAddModal={setOpenAddModal} openAddModal={openAddModal}></ReplyUser>
+
+      <ReplyUser
+        setOpenAddModal={setOpenAddModal}
+        openAddModal={openAddModal}
+        selectedUser={selectedUser}
+      />
     </div>
   );
 };

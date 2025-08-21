@@ -1,17 +1,49 @@
-import { Form, Input, Modal } from 'antd'
-import React from 'react'
+import { Form, Input, message, Modal } from "antd";
+import React, { useEffect } from "react";
+import {
+  useGetSingleReplyQuery,
+  useReplyUserMutation,
+} from "../redux/api/manageApi";
 
-const ReplyUser = ({openAddModal,setOpenAddModal}) => {
-        const [form] = Form.useForm();
-        const handleCancel = () => {
-            form.resetFields();
-          
-            setOpenAddModal(false);
-          };
-    
-          const handleSubmit = async (values) => {
-           console.log(values)
-          };
+const ReplyUser = ({ openAddModal, setOpenAddModal, selectedUser }) => {
+  console.log(selectedUser?.id);
+  console.log(selectedUser?.key);
+  const id = selectedUser?.key;
+  console.log(id);
+  const [form] = Form.useForm();
+  const { data: singleReply } = useGetSingleReplyQuery({ id });
+  console.log(singleReply);
+  const [replyUser] = useReplyUserMutation();
+  const handleCancel = () => {
+    form.resetFields();
+
+    setOpenAddModal(false);
+  };
+  useEffect(() => {
+    if (singleReply?.data) {
+      form.setFieldsValue({
+        message: singleReply?.data?.message,
+      });
+    }
+  }, [singleReply, form]);
+  const handleSubmit = async (values) => {
+    const id = selectedUser?.key;
+    console.log(values);
+    const data = {
+      userId: selectedUser?.id,
+      message: values?.message,
+    };
+
+    try {
+      const response = await replyUser({ data, id }).unwrap();
+
+      message.success(response?.message);
+      setOpenAddModal(false);
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message);
+    }
+  };
   return (
     <Modal
       centered
@@ -23,25 +55,22 @@ const ReplyUser = ({openAddModal,setOpenAddModal}) => {
       <div className="mb-6 mt-4">
         <h2 className="text-center font-bold text-lg mb-4">Reply</h2>
         <Form form={form} onFinish={handleSubmit} layout="vertical">
-   
-
           {/* Description */}
           <Form.Item
             label="Answer"
-            name="reply"
+            name="message"
             rules={[{ required: true, message: "Please enter the reply" }]}
           >
             <Input.TextArea placeholder="Enter Reply" rows={4} />
           </Form.Item>
           <div className="flex gap-3 mt-3">
-          <button
+            <button
               type="submit"
               className="px-4 py-3 w-full bg-[#D17C51] text-white rounded-md"
-             
             >
-                Reply
+              Reply
             </button>
-          <button
+            <button
               type="button"
               className="px-4 py-3 w-full bg-[#D9000A] text-white rounded-md"
               onClick={handleCancel}
@@ -52,9 +81,7 @@ const ReplyUser = ({openAddModal,setOpenAddModal}) => {
         </Form>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default ReplyUser
-
-           
+export default ReplyUser;

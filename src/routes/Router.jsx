@@ -89,7 +89,7 @@ export const router = createBrowserRouter([
         element: <Barber></Barber>
       },
       {
-        path: "/dashboard/barber/barberDetails",
+        path: "/dashboard/barber/barberDetails/:id",
         element: <BarberDetailsPage></BarberDetailsPage>
       },
       {

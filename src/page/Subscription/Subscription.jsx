@@ -1,67 +1,51 @@
-import { Table, Switch, Tag, Input, Button, Dropdown, Space } from "antd";
-import {
-  SearchOutlined,
-  FilterOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { Table } from "antd";
 import { Navigate } from "../../Navigate";
-import { TbFilter } from "react-icons/tb";
-import { MdOutlineStarPurple500 } from "react-icons/md";
-import { IoIosArrowDown } from "react-icons/io";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AddSubscriptionModal } from "./AddSubscriptionModal";
 import { EditSubscriptionModal } from "./EditSubscriptionModal";
+import { useGetSubscriptionQuery } from "../redux/api/manageApi";
 
 const Subscription = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-  const items = [
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          Blocked
-        </button>
-      ),
-      key: "0",
-    },
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          Active
-        </button>
-      ),
-      key: "1",
-    },
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          All Customers
-        </button>
-      ),
-      key: "2",
-    },
-  ];
 
+  // API Call
+  const { data: subscriptionData, isLoading } = useGetSubscriptionQuery();
+  console.log(subscriptionData);
+const [selectedUser, setSelectedUser] = useState(null);
   const handleEdit = (record) => {
+    setSelectedUser(record);
     setEditModal(true);
   };
+  // map api data for table
+  const tableData = useMemo(() => {
+    if (!subscriptionData?.data) return [];
+    return subscriptionData.data.map((item, index) => ({
+      key: item.id,
+      id: index + 1,
+      name: item.title,
+      description: item.description,
+      duration: item.duration ,
+      fee: item.price,
+      status: item.status,
+    }));
+  }, [subscriptionData]);
+
   const columns = [
     {
       title: "#",
       dataIndex: "id",
       key: "id",
     },
-
     {
       title: "Subscription Name",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Deration",
-      dataIndex: "deration",
-      key: "deration",
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
     },
     {
       title: "Subscription Fee",
@@ -79,9 +63,8 @@ const Subscription = () => {
       render: (_, record) => (
         <div>
           <button
-            onClick={() => handleEdit(record)}
-            shape="circle"
-            className="  rounded text-[#AB684D]"
+             onClick={() => handleEdit(record)}
+            className="rounded text-[#AB684D]"
           >
             Edit
           </button>
@@ -90,44 +73,15 @@ const Subscription = () => {
     },
   ];
 
-  const data = [
-    {
-      id: "01",
-      name: "Barber Time",
-      description: "View ",
-      deration: "Monthly",
-      fee: "$09.00 ",
-    },
-    {
-      id: "02",
-      name: "Barber Time",
-      description: "View ",
-      deration: "Monthly",
-      fee: "$09.00 ",
-    },
-    {
-      id: "03",
-      name: "Barber Time",
-      description: "View ",
-      deration: "Monthly",
-      fee: "$09.00 ",
-    },
-    {
-      id: "04",
-      name: "Barber Time",
-      description: "View ",
-      deration: "Monthly",
-      fee: "$09.00 ",
-    },
-  ];
-
   return (
     <div>
       <div className="p-1">
         <div className="flex justify-between">
-          <div className="flex ">
-            <Navigate title={"Customers"}></Navigate>
-            <h1 className=" pl-2 font-semibold text-xl">{`(110)`}</h1>
+          <div className="flex">
+            <Navigate title={"Subscription"} />
+            <h1 className="pl-2 font-semibold text-xl">
+              {`(${subscriptionData?.data?.length || 0})`}
+            </h1>
           </div>
           <button
             className="bg-[#D17C51] px-5 py-2 text-white rounded"
@@ -136,45 +90,30 @@ const Subscription = () => {
             + Subscription
           </button>
         </div>
-        {/* Filter and Search */}
-        <div className=" p-2">
-          <div className="flex justify-between items-center mb-4">
-            <Dropdown
-              menu={{
-                items,
-              }}
-              trigger={["click"]}
-            >
-              <button
-                className="flex gap-2 items-center border text-[#9C5F46] border-[#D17C51] p-1 px-3 rounded"
-                onClick={(e) => e.preventDefault()}
-              >
-                All Customers
-                <IoIosArrowDown />
-              </button>
-            </Dropdown>
-          </div>
 
-          {/* Table */}
-          <div className=" rounded-md overflow-hidden">
+        <div className="p-2">
+          <div className="rounded-md overflow-hidden">
             <Table
               columns={columns}
-              dataSource={data}
+              dataSource={tableData}
+              loading={isLoading}
               pagination={false}
-              rowClassName=" border-b border-gray-300"
-              scroll={{ x: 750 }} 
+              rowClassName="border-b border-gray-300"
+              scroll={{ x: 750 }}
             />
           </div>
         </div>
       </div>
+
       <AddSubscriptionModal
         setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}
-      ></AddSubscriptionModal>
+      />
       <EditSubscriptionModal
         editModal={editModal}
         setEditModal={setEditModal}
-      ></EditSubscriptionModal>
+        selectedUser={selectedUser}
+      />
     </div>
   );
 };

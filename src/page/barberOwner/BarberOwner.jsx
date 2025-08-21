@@ -1,45 +1,68 @@
-import { Table, Switch, Tag, Input, Button, Dropdown, Space } from "antd";
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import { Table, Switch, Tag, Input, message, Pagination } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { Navigate } from "../../Navigate";
-import { TbFilter } from "react-icons/tb";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { useState, useMemo } from "react";
+import {
+  useBlockOwnerMutation,
+  useGetBarberOwnerQuery,
+} from "../redux/api/manageApi";
 
 const BarberOwner = () => {
-  const items = [
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          Top Selling
-        </button>
-      ),
-      key: "0",
-    },
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          Active
-        </button>
-      ),
-      key: "1",
-    },
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          Inactive
-        </button>
-      ),
-      key: "2",
-    },
-    {
-      label: (
-        <button target="_blank" rel="noopener noreferrer">
-          All Shops
-        </button>
-      ),
-      key: "3",
-    },
-  ];
+  const [selectedYear, setSelectedYear] = useState("ACTIVE");
+  const [searchTerm, setSearch] = useState("");
+  console.log(searchTerm)
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const pageSize = 10;
+  // API queries
+  const {
+    data: barberData,
+    isLoading,
+    refetch,
+  } = useGetBarberOwnerQuery({
+    status: selectedYear,
+    searchTerm:searchTerm,
+     page: currentPage,
+    limit: pageSize,
+  });
+  const [blockUser, { isLoading: blockLoading }] = useBlockOwnerMutation();
+
+  const tableData = useMemo(() => {
+    if (!barberData?.data) return [];
+
+    return barberData.data.map((item, index) => ({
+      key: item.id || index,
+      id: index + 1,
+      shopName: item.shopName,
+      avatar: item.shopLogo,
+      city: item.shopAddress,
+      rating: "5.0",
+      contact: item.shopPhoneNumber || item.phoneNumber,
+     status: item.isVerified ? "ACTIVE" : "INACTIVE",
+      isVerified: item.isVerified,
+    }));
+  }, [barberData]);
+
+  const handleBlockToggle = async (record, checked) => {
+    console.log(checked);
+    try {
+      const res = await blockUser({
+        id: record.key,
+        data: checked,
+      }).unwrap();
+console.log(res)
+      message.success(
+      res?.message
+      );
+
+      refetch();
+    } catch (err) {
+      console.error(err);
+      message.error("Failed to update status ❌");
+    }
+  };
 
   const columns = [
     {
@@ -56,9 +79,11 @@ const BarberOwner = () => {
           <img
             src={record.avatar}
             alt="avatar"
-            className="w-8 h-8 rounded-full"
+            className="w-8 h-8 rounded-full object-cover"
           />
-          <Link to={'/dashboard/barberOwner/barberDetails'}><span>{text}</span></Link>
+          <Link to={`/dashboard/barberOwner/barberDetails/${record.key}`}>
+            <span>{text}</span>
+          </Link>
         </div>
       ),
     },
@@ -92,7 +117,7 @@ const BarberOwner = () => {
       render: (status) => (
         <Tag
           className="px-4 py-1 rounded-full"
-          color={status === "Active" ? "#C79A88" : "red"}
+          color={status === "ACTIVE" ? "#C79A88" : "red"}
         >
           {status}
         </Tag>
@@ -100,89 +125,43 @@ const BarberOwner = () => {
     },
     {
       title: "Block / Unblock",
-      dataIndex: "blocked",
       key: "blocked",
-      render: (blocked) => <Switch defaultChecked={!blocked} />,
+      render: (_, record) => (
+        <Switch
+          checked={record.isVerified}
+          onChange={(checked) => handleBlockToggle(record, checked)}
+          loading={blockLoading}
+        />
+      ),
     },
   ];
 
-  const data = [
-    {
-      id: "01",
-      shopName: "Barber Time",
-      avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-      city: "Berlin",
-      rating: "5.0",
-      contact: "+9724545643",
-      status: "Active",
-      blocked: false,
-    },
-    {
-      id: "02",
-      shopName: "Barber Time",
-      avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-      city: "Frankfurt",
-      rating: "5.0",
-      contact: "+9724545643",
-      status: "Inactive",
-      blocked: true,
-    },
-    {
-      id: "03",
-      shopName: "Barber Time",
-      avatar: "https://randomuser.me/api/portraits/women/3.jpg",
-      city: "Berlin",
-      rating: "5.0",
-      contact: "+9724545643",
-      status: "Active",
-      blocked: false,
-    },
-    {
-      id: "04",
-      shopName: "Barber Time",
-      avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-      city: "Frankfurt",
-      rating: "5.0",
-      contact: "+9724545643",
-      status: "Active",
-      blocked: false,
-    },
-    {
-      id: "05",
-      shopName: "Barber Time",
-      avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-      city: "Berlin",
-      rating: "5.0",
-      contact: "+9724545643",
-      status: "Active",
-      blocked: false,
-    },
-  ];
+  const handleYearChange = (e) => {
+    setSelectedYear(e.target.value);
+  };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="p-1">
       <div className="flex ">
-        <Navigate title={"Barber Owner"}></Navigate>
-        
+        <Navigate title={"Barber Owner"} />
       </div>
-      {/* Filter and Searc */}
+
+      {/* Filter and Search */}
       <div className="p-2">
         <div className="flex justify-between items-center mb-4">
-          <Dropdown
-            menu={{
-              items,
-            }}
-            trigger={["click"]}
+          <select
+            className="rounded p-2 px-4 border border-[#C79A88] mr-11"
+            value={selectedYear}
+            onChange={handleYearChange}
           >
-            <button
-              className="flex gap-2 items-center border border-[#D17C51] p-1 px-3 rounded"
-              onClick={(e) => e.preventDefault()}
-            >
-              Filter
-              <TbFilter />
-            </button>
-          </Dropdown>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
           <Input
+           onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
             prefix={<SearchOutlined />}
             className="w-64 px-4 py-2 rounded-lg bg-white"
@@ -190,13 +169,25 @@ const BarberOwner = () => {
         </div>
 
         {/* Table */}
-        <div className=" rounded-md overflow-hidden">
+        <div className="rounded-md overflow-hidden">
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={tableData}
+            loading={isLoading}
             pagination={false}
-            rowClassName=" border-b border-gray-300"
-            scroll={{ x: 800 }} 
+            rowClassName="border-b border-gray-300"
+            scroll={{ x: 800 }}
+          />
+        </div>
+
+           <div className="mt-4 flex justify-center">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={barberData?.meta?.total || 0}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+            
           />
         </div>
       </div>

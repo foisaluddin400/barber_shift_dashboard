@@ -1,20 +1,53 @@
-import { Form, Input, Modal, Select } from 'antd';
-import React, { useState } from 'react'
+import { Form, Input, message, Modal, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import { useUpdateSubscriptionMutation } from "../redux/api/manageApi";
 
-export const EditSubscriptionModal = ({editModal,
-    setEditModal,
-    }) => {
-    const [fileList, setFileList] = useState([]); 
-    const [form] = Form.useForm();
-    const handleCancel = () => {
-        form.resetFields();
-        setFileList([]);
-        setEditModal(false);
-      };
+export const EditSubscriptionModal = ({
+  editModal,
+  setEditModal,
+  selectedUser,
+}) => {
+  console.log(selectedUser);
+  const [updateSubscription] = useUpdateSubscriptionMutation();
 
-      const handleSubmit = async (values) => {
-       console.log(values)
-      };
+  const [form] = Form.useForm();
+  const handleCancel = () => {
+    form.resetFields();
+
+    setEditModal(false);
+  };
+
+  useEffect(() => {
+    if (selectedUser) {
+      form.setFieldsValue({
+        description: selectedUser?.description,
+        duration: selectedUser?.duration,
+        price: selectedUser?.fee,
+        title: selectedUser?.name,
+      });
+    }
+  }, [selectedUser, form]);
+
+  const handleSubmit = async (values) => {
+    console.log(values);
+    const id =selectedUser?.key
+    const data = {
+      duration: values?.duration,
+      price: Number(values?.price),
+      description: values?.description,
+      title: values?.title,
+    };
+    console.log(data);
+    try {
+      const response = await updateSubscription({data, id}).unwrap();
+
+      message.success(response?.message);
+      setEditModal(false);
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message);
+    }
+  };
   return (
     <Modal
       centered
@@ -29,8 +62,10 @@ export const EditSubscriptionModal = ({editModal,
           {/* Package Name */}
           <Form.Item
             label="Subscription Plan Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter the package name" }]}
+            name="title"
+            rules={[
+              { required: true, message: "Please enter the package name" },
+            ]}
           >
             <Input className="py-2" placeholder="Enter package name" />
           </Form.Item>
@@ -53,9 +88,10 @@ export const EditSubscriptionModal = ({editModal,
               placeholder="Duration"
               optionFilterProp="label"
               options={[
-                { value: "yearly", label: "Yearly" },
-                { value: "monthly", label: "Monthly" },
-               
+                { value: "WEEKLY", label: "Weekly" },
+                { value: "MONTHLY", label: "Monthly" },
+                { value: "YEARLY", label: "Yearly" },
+                { value: "LIFETIME", label: "Life Time" },
               ]}
             />
           </Form.Item>
@@ -63,38 +99,34 @@ export const EditSubscriptionModal = ({editModal,
           {/* Description */}
           <Form.Item
             label="Point Range"
-            name="descriptions"
-            rules={[{ required: true, message: "Please enter the description" }]}
+            name="description"
+            rules={[
+              { required: true, message: "Please enter the description" },
+            ]}
           >
             <Input.TextArea placeholder="Enter description" rows={4} />
           </Form.Item>
 
           {/* Services Selection */}
-          
 
-        
           {/* Buttons */}
           <div className="flex gap-3 mt-4">
-          <button
+            <button
               type="submit"
               className="px-4 py-3 w-full bg-[#D17C51] text-white rounded-md"
-             
             >
-              
-                Add
-            
+              Update
             </button>
-          <button
+            <button
               type="button"
               className="px-4 py-3 w-full bg-[#D9000A] text-white rounded-md"
               onClick={handleCancel}
             >
               Cancel
             </button>
-           
           </div>
         </Form>
       </div>
     </Modal>
-  )
-}
+  );
+};
