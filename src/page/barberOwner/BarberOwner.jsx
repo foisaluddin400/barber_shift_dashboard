@@ -12,9 +12,9 @@ import {
 const BarberOwner = () => {
   const [selectedYear, setSelectedYear] = useState("ACTIVE");
   const [searchTerm, setSearch] = useState("");
-  console.log(searchTerm)
+  console.log(searchTerm);
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const pageSize = 10;
   // API queries
   const {
@@ -23,8 +23,8 @@ const BarberOwner = () => {
     refetch,
   } = useGetBarberOwnerQuery({
     status: selectedYear,
-    searchTerm:searchTerm,
-     page: currentPage,
+    searchTerm: searchTerm,
+    page: currentPage,
     limit: pageSize,
   });
   const [blockUser, { isLoading: blockLoading }] = useBlockOwnerMutation();
@@ -40,7 +40,7 @@ const BarberOwner = () => {
       city: item.shopAddress,
       rating: "5.0",
       contact: item.shopPhoneNumber || item.phoneNumber,
-     status: item.isVerified ? "ACTIVE" : "INACTIVE",
+      status: item.isVerified ? "ACTIVE" : "INACTIVE",
       isVerified: item.isVerified,
     }));
   }, [barberData]);
@@ -52,10 +52,8 @@ const BarberOwner = () => {
         id: record.key,
         data: checked,
       }).unwrap();
-console.log(res)
-      message.success(
-      res?.message
-      );
+      console.log(res);
+      message.success(res?.message);
 
       refetch();
     } catch (err) {
@@ -156,12 +154,14 @@ console.log(res)
             className="rounded p-2 px-4 border border-[#C79A88] mr-11"
             value={selectedYear}
             onChange={handleYearChange}
+            defaultValue={''}
           >
+            <option value="">All</option>
             <option value="ACTIVE">Active</option>
-            <option value="INACTIVE">Inactive</option>
+            <option value="BLOCKED">Inactive</option>
           </select>
           <Input
-           onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
             prefix={<SearchOutlined />}
             className="w-64 px-4 py-2 rounded-lg bg-white"
@@ -180,14 +180,13 @@ console.log(res)
           />
         </div>
 
-           <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex justify-center">
           <Pagination
             current={currentPage}
             pageSize={pageSize}
             total={barberData?.meta?.total || 0}
             onChange={handlePageChange}
             showSizeChanger={false}
-            
           />
         </div>
       </div>

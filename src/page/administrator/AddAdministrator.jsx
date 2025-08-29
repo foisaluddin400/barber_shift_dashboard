@@ -1,60 +1,107 @@
-import { Form, Input, Modal, Select, Checkbox } from "antd";
+import { Form, Input, Modal, Select, Checkbox, message } from "antd";
 import React, { useState } from "react";
 import { IoCameraOutline } from "react-icons/io5";
+import {
+  useAddAdminProvideMutation,
+  useGetAllAccessFunctionsQuery,
+} from "../redux/api/manageApi";
 
 const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
   const [form] = Form.useForm();
   const [imagePreview, setImagePreview] = useState(null);
-  const [checkAll, setCheckAll] = useState(true);
-  const [checkedList, setCheckedList] = useState([
-    "Dashboard",
-    "User Management",
-    "Barber owner",
-    "Subscriptions",
-    "Support",
-    "Settings",
-  ]);
-//sdfsdf
-  const accessOptions = [
-    "Dashboard",
-    "User Management",
-    "Barber owner",
-    "Subscriptions",
-    "Support",
-    "Settings",
-  ];
+  const [checkedList, setCheckedList] = useState([]);
+  const [file, setFile] = useState(null);
+  const [role, setRole] = useState(null); // ✅ selected role
 
+  const { data: accessCheckFunctionData } = useGetAllAccessFunctionsQuery();
+  console.log(accessCheckFunctionData)
+  const [AddAdminProvide] = useAddAdminProvideMutation();
+
+  const accessOptions =
+    accessCheckFunctionData?.data?.map((item) => ({
+      label: item.function,
+      value: item.id,
+    })) || [];
+
+  // Modal Cancel
   const handleCancel = () => {
     form.resetFields();
     setImagePreview(null);
     setOpenAddModal(false);
-  };
-
-  const handleSubmit = async (values) => {
-    console.log({
-      ...values,
-      permissions: checkAll ? "All" : checkedList,
-    });
+    setCheckedList([]);
+    setFile(null);
+    setRole(null);
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setImagePreview(URL.createObjectURL(selectedFile));
     }
   };
 
-  const handleCheckAllChange = (e) => {
-    const isChecked = e.target.checked;
-    setCheckAll(isChecked);
-    setCheckedList(isChecked ? accessOptions : []);
+  const handleSubmit = async (values) => {
+    try {
+      const formData = new FormData();
+
+      if (file) {
+        formData.append("profileImage", file);
+      }
+
+      const payload = {
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+        function: checkedList,
+      };
+
+      formData.append("bodyData", JSON.stringify(payload));
+
+      const response = await AddAdminProvide(formData).unwrap();
+      message.success(response?.message);
+      handleCancel();
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message);
+    }
   };
 
-  const handleCheckboxGroupChange = (list) => {
-    setCheckedList(list);
-    setCheckAll(list.length === accessOptions.length);
+  // ✅ Role change
+  const handleRoleChange = (value) => {
+    setRole(value);
+
+    if (value === "SUPER_ADMIN") {
+  
+      setCheckedList(accessOptions.map((o) => o.value));
+    } else {
+ 
+      setCheckedList([]);
+    }
   };
+
+
+const handleCheckboxGroupChange = (list) => {
+  if (role === "ADMIN") {
+    // Find the "ALL" value from accessOptions (case-sensitive match with data)
+    const allOption = accessOptions.find((o) => o.label === "ALL")?.value;
+
+    // If the "ALL" checkbox is selected
+    if (allOption && list.includes(allOption)) {
+      // Select all options
+      setCheckedList(accessOptions.map((o) => o.value));
+    } else {
+      // Otherwise, set only the selected items
+      setCheckedList(list);
+    }
+  } else {
+    // For non-ADMIN roles, just update the checked list
+    setCheckedList(list);
+  }
+};
+
+
 
   return (
     <Modal
@@ -65,7 +112,9 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
       width={450}
     >
       <div className="mb-6 mt-2">
-        <h2 className="text-center font-semibold text-xl mb-6">Add</h2>
+        <h2 className="text-center font-semibold text-xl mb-6">
+          Add Administrator
+        </h2>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -100,7 +149,7 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
           {/* Name */}
           <Form.Item
             label="Name"
-            name="name"
+            name="fullName"
             rules={[{ required: true, message: "Please enter name" }]}
           >
             <Input placeholder="Type here" />
@@ -111,15 +160,6 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
             label="Email"
             name="email"
             rules={[{ required: true, message: "Please enter email" }]}
-          >
-            <Input placeholder="Type here" />
-          </Form.Item>
-
-          {/* Contact Number */}
-          <Form.Item
-            label="Contact Number"
-            name="contact"
-            rules={[{ required: true, message: "Please enter contact number" }]}
           >
             <Input placeholder="Type here" />
           </Form.Item>
@@ -142,9 +182,10 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
             <Select
               placeholder="Select role"
               options={[
-                { label: "Owner", value: "Owner" },
-                { label: "Admin", value: "Admin" },
+                { label: "Super Admin", value: "SUPER_ADMIN" },
+                { label: "Admin", value: "ADMIN" },
               ]}
+              onChange={handleRoleChange}
             />
           </Form.Item>
 
@@ -152,23 +193,19 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
           <label className="block text-sm font-medium text-black mb-1">
             Give Access To
           </label>
-          <div>
-            <Checkbox checked={checkAll} onChange={handleCheckAllChange}>
-              All
-            </Checkbox>
-            <div className="grid grid-cols-2 ">
-              <Checkbox.Group
-                options={accessOptions}
-                value={checkedList}
-                onChange={handleCheckboxGroupChange}
-              />
-            </div>
+          <div className="grid grid-cols-2 mt-2">
+            <Checkbox.Group
+              options={accessOptions}
+              value={checkedList}
+              onChange={handleCheckboxGroupChange}
+              disabled={role === "SUPER_ADMIN"}
+            />
           </div>
 
           {/* Buttons */}
           <button
             type="submit"
-            className="w-full py-2 mt-2 bg-[#D17C51] text-white rounded-md"
+            className="w-full py-2 mt-4 bg-[#D17C51] text-white rounded-md"
           >
             Save
           </button>

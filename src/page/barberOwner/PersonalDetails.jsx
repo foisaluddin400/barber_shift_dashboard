@@ -1,6 +1,7 @@
 import React from 'react'
 
-export const PersonalDetails = () => {
+export const PersonalDetails = ({singleBarber}) => {
+  console.log(singleBarber)
   return (
     <div>
         <div className="mt-6 space-y-4">
@@ -9,7 +10,7 @@ export const PersonalDetails = () => {
           <input
             type="text"
             className="w-full border p-2 rounded-md"
-            value="Abiha Sunshine"
+            value={singleBarber?.data?.fullName}
             disabled
           />
         </div>
@@ -18,16 +19,16 @@ export const PersonalDetails = () => {
           <input
             type="text"
             className="w-full border p-2 rounded-md"
-            value="Abiha Sunshine"
+            value={singleBarber?.data?.shopName}
             disabled
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Shop Type</label>
+          <label className="block text-sm font-medium">Status</label>
           <input
             type="text"
             className="w-full border p-2 rounded-md"
-            value="Abiha Sunshine"
+            value={singleBarber?.data?.status}
             disabled
           />
         </div>
@@ -36,7 +37,7 @@ export const PersonalDetails = () => {
           <input
             type="email"
             className="w-full border p-2 rounded-md"
-            value="abihasunshine@gmail.com"
+            value={singleBarber?.data?.email}
             disabled
           />
         </div>
@@ -45,7 +46,7 @@ export const PersonalDetails = () => {
           <input
             type="tel"
             className="w-full border p-2 rounded-md"
-            value="+7838737999"
+            value={singleBarber?.data?.phoneNumber}
            disabled
           />
         </div>
@@ -54,7 +55,7 @@ export const PersonalDetails = () => {
           <input
             type="text"
             className="w-full border p-2 rounded-md"
-            value="Abiha Sunshine"
+            value={singleBarber?.data?.shopAddress}
             disabled
           />
         </div>

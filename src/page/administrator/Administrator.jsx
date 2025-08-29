@@ -1,4 +1,4 @@
-import { Table, Input, Button, Space, Tooltip } from "antd";
+import { Table, Input, Space, Tooltip, Select, message, Pagination } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { Navigate } from "../../Navigate";
 import { useState } from "react";
@@ -6,11 +6,40 @@ import AddAdministrator from "./AddAdministrator";
 import EditAdministrator from "./EditAdministrator";
 import { FiEdit2 } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useDeleteAdminAccessMutation, useGetAllAdminAccessQuery } from "../redux/api/manageApi";
+
+const { Option } = Select;
 
 const Administrator = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
+const [deleteUser] = useDeleteAdminAccessMutation()
+  const [searchTerm, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+console.log(searchTerm)
+  const { data: adminData, isLoading } = useGetAllAdminAccessQuery({
+    searchTerm,
+    page: currentPage,
+    limit: pageSize,
+  });
+  console.log("Admin Data:", adminData);
+ const [selectedUser, setSelectedUser] = useState(null);
+  const handleEdit = (record) => {
+    setSelectedUser(record);
+    setEditModal(true);
+  };
 
+    const handleDeleteFaq = async (id) => {
+      console.log(id)
+    try {
+      const res = await deleteUser(id).unwrap();
+      message.success(res?.message);
+    } catch (err) {
+      message.error(err?.data?.message);
+    }
+  };
+  const handlePageChange = (page) => setCurrentPage(page);
   const columns = [
     {
       title: "SL no.",
@@ -38,14 +67,29 @@ const Administrator = () => {
       key: "email",
     },
     {
-      title: "Contact Number",
-      dataIndex: "contact",
-      key: "contact",
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
     },
     {
-      title: "Has Access to",
+      title: "Has Access To",
       dataIndex: "access",
       key: "access",
+      render: (accesses) => (
+        <Select
+          mode="multiple"
+          value={accesses}
+          style={{ width: 200, }}
+          
+         
+        >
+          {accesses.map((acc) => (
+            <Option key={acc} value={acc}>
+              {acc}
+            </Option>
+          ))}
+        </Select>
+      ),
     },
     {
       title: "Action",
@@ -54,145 +98,86 @@ const Administrator = () => {
         <Space size="middle">
           <Tooltip title="Edit">
             <button
-              onClick={() => setEditModal(true)}
-              
+              onClick={() => handleEdit(record)}
               className="bg-[#D17C51] p-2 rounded text-xl text-white"
-             
-            ><FiEdit2 /></button>
+            >
+              <FiEdit2 />
+            </button>
           </Tooltip>
           <Tooltip title="Delete">
-            <button
-            
-              className="bg-red-500 p-2 rounded text-xl text-white"
-              
-            ><RiDeleteBin6Line /></button>
+            <button onClick={() => handleDeleteFaq(record?.key)} className="bg-red-500 p-2 rounded text-xl text-white">
+              <RiDeleteBin6Line />
+            </button>
           </Tooltip>
         </Space>
       ),
     },
   ];
 
-  const data = [
-    {
-      key: "1",
-      sl: "#1233",
-      name: "Kathryn Murp",
-      avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-      email: "bockely@att.com",
-      contact: "(201) 555-0124",
-      access: "User Management",
-    },
-    {
-      key: "2",
-      sl: "#1233",
-      name: "Devon Lane",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      email: "csilvers@rizon.com",
-      contact: "(219) 555-0114",
-      access: "Barber owner",
-    },
-    {
-      key: "3",
-      sl: "#1233",
-      name: "Foysal Rahman",
-      avatar: "https://randomuser.me/api/portraits/men/72.jpg",
-      email: "qamaho@mail.com",
-      contact: "(316) 555-0116",
-      access: "User Report",
-    },
-    {
-      key: "4",
-      sl: "#1233",
-      name: "Hari Danang",
-      avatar: "https://randomuser.me/api/portraits/men/15.jpg",
-      email: "xterris@gmail.com",
-      contact: "(907) 555-0101",
-      access: "Review Conversation",
-    },
-    {
-      key: "5",
-      sl: "#1233",
-      name: "Floyd Miles",
-      avatar: "https://randomuser.me/api/portraits/men/10.jpg",
-      email: "xterris@gmail.com",
-      contact: "(505) 555-0125",
-      access: "Bank Transfer, Transaction",
-    },
-    {
-      key: "6",
-      sl: "#1233",
-      name: "Eleanor Pena",
-      avatar: "https://randomuser.me/api/portraits/women/20.jpg",
-      email: "xterris@gmail.com",
-      contact: "(704) 555-0127",
-      access: "Support",
-    },
-    {
-      key: "7",
-      sl: "#1233",
-      name: "Devon Lane",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      email: "xterris@gmail.com",
-      contact: "(219) 555-0114",
-      access: "Category Management",
-    },
-    {
-      key: "8",
-      sl: "#1233",
-      name: "Hari Danang",
-      avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-      email: "xterris@gmail.com",
-      contact: "(270) 555-0117",
-      access: "Auction Management",
-    },
-    {
-      key: "9",
-      sl: "#1233",
-      name: "Hari Danang",
-      avatar: "https://randomuser.me/api/portraits/men/91.jpg",
-      email: "xterris@gmail.com",
-      contact: "(207) 555-0119",
-      access: "Barber",
-    },
-  ];
+  // ✅ Data mapping from API
+  const data =
+    adminData?.data?.map((admin, index) => ({
+      key: admin.adminId,
+      sl: index + 1,
+      name: admin.adminName,
+      avatar: admin.adminImage,
+      email: admin.adminEmail,
+      role: admin.role,
+      access:
+        admin.accesses?.length > 0
+          ? admin.accesses.map((a) => a.function)
+          : ["Super Admin"],
+    })) || [];
 
   return (
     <div className="p-1">
+      {/* Header with search */}
       <div className="flex justify-between mb-4">
-        <Navigate title={"Customers"} />
+        <Navigate title={"Administrator"} />
         <Input
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Search"
           prefix={<SearchOutlined />}
           className="w-64 px-4 py-2 rounded-lg bg-white"
         />
       </div>
 
+      {/* Add Admin Button */}
       <button
         className="bg-[#D17C51] px-5 py-2 text-white rounded mb-4"
         onClick={() => setOpenAddModal(true)}
       >
-        + Subscription
+        + Add Administrator
       </button>
 
+      {/* Table */}
       <div className="rounded-md overflow-hidden">
         <Table
           columns={columns}
           dataSource={data}
+          loading={isLoading}
           pagination={false}
           rowClassName="border-b border-gray-200"
-          scroll={{ x: 900 }} 
+          scroll={{ x: 900 }}
         />
       </div>
+
+         <div className="mt-4 flex justify-center">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={adminData?.meta?.total || 0}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+          />
+        </div>
 
       {/* Modals */}
       <AddAdministrator
         setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}
       />
-      <EditAdministrator
-        editModal={editModal}
-        setEditModal={setEditModal}
-      />
+      <EditAdministrator editModal={editModal} setEditModal={setEditModal} selectedUser={selectedUser}/>
     </div>
   );
 };

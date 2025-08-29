@@ -48,7 +48,7 @@ const AdPromotional = () => {
       </div>
       {selectedTab === "personal" && (
         <div>
-          <Adds setEditModal={setEditModal}></Adds>
+          <Adds ></Adds>
         </div>
       )}
 
@@ -60,8 +60,7 @@ const AdPromotional = () => {
 
       <AddPromotionModal setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}></AddPromotionModal>
-        <EditPromotionModal  editModal={editModal}
-        setEditModal={setEditModal}></EditPromotionModal>
+        
     </div>
   );
 };

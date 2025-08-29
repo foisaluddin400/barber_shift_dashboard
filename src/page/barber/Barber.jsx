@@ -18,6 +18,7 @@ export const Barber = () => {
     limit: pageSize,
   });
 
+  console.log(barbersData)
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };

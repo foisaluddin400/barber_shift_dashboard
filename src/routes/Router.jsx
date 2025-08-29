@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
         element: <AllShopRegistration></AllShopRegistration>
       },
       {
-        path: "/dashboard/barberOwner/barberDetails",
+        path: "/dashboard/barberOwner/barberDetails/:id",
         element: <BarberOwnerDetails></BarberOwnerDetails>
       },
       {

@@ -2,10 +2,31 @@ import { baseApi } from "./baseApi";
 
 const businessApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
+     getDasboard: builder.query({
+      query: () => {
+        return {
+          url: `/admin/dashboard`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
     getBarberOwner: builder.query({
       query: ({ status, page, limit, searchTerm }) => {
         return {
           url: `/admin/saloons?status=${status}&searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
+    getSingleBarberOwner: builder.query({
+      query: ({ id }) => {
+        return {
+          url: `/admin/saloon/${id}`,
           method: "GET",
         };
       },
@@ -22,10 +43,40 @@ const businessApi = baseApi.injectEndpoints({
       providesTags: ["updateProfile"],
     }),
 
+    getAllSubscriber: builder.query({
+      query: ({ page, limit, searchTerm }) => {
+        return {
+          url: `/admin/subscribers?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
+    getSingleAllBarber: builder.query({
+      query: ({ id }) => {
+        return {
+          url: `/admin/barber/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
     getAllReports: builder.query({
+      query: ({ page, limit, searchTerm }) => {
+        return {
+          url: `/support/reports?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
+    getAllSupport: builder.query({
       query: () => {
         return {
-          url: `/support/reports`,
+          url: `/support`,
           method: "GET",
         };
       },
@@ -48,6 +99,17 @@ const businessApi = baseApi.injectEndpoints({
           url: `/admin/block-saloon/${id}`,
           method: "PATCH",
           body: { status: data },
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
+
+    updateSupport: builder.mutation({
+      query: ({ data, id }) => {
+        return {
+          url: `/support/${id}`,
+          method: "PATCH",
+          body: data,
         };
       },
       invalidatesTags: ["updateProfile"],
@@ -78,6 +140,16 @@ const businessApi = baseApi.injectEndpoints({
       query: ({ id }) => {
         return {
           url: `/support/reply-sent/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
+    getSingleSupport: builder.query({
+      query: ({ id }) => {
+        return {
+          url: `/support/support-sent/${id}`,
           method: "GET",
         };
       },
@@ -116,296 +188,237 @@ const businessApi = baseApi.injectEndpoints({
       invalidatesTags: ["updateProfile"],
     }),
 
-    //     getSingleIterestUser: builder.query({
-    //       query: ({ businessId }) => {
-    //         return {
-    //           url: `/business/get-single-business-with-users?businessId=${businessId}`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    getAddPromotion: builder.query({
+      query: () => {
+        return {
+          url: `/ads`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //     getDetailsSingleIterestUser: builder.query({
-    //       query: ({ businessId, interestedId }) => {
-    //         return {
-    //           url: `/business/interested-buyers-details?businessId=${businessId}&interestedId=${interestedId}`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    addAddpromotion: builder.mutation({
+      query: (formData) => {
+        return {
+          url: "/ads",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     getAllBusiness: builder.query({
-    //       query: () => {
-    //         return {
-    //           url: `/interested/interested-business`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    updateAddPromotion: builder.mutation({
+      query: ({ formData, id }) => {
+        return {
+          url: `/ads/${id}`,
+          method: "PATCH",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     getSingleFormat: builder.query({
-    //       query: ({ formationId }) => {
-    //         return {
-    //           url: `/formation/single-format?formationId=${formationId}`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    deleteAddPromotion: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/ads/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     getSingleBusinessContact: builder.query({
-    //       query: ({ userId }) => {
-    //         return {
-    //           url: `/user/seller-detail?userId=${userId}`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    getFaq: builder.query({
+      query: () => {
+        return {
+          url: `/faqs`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //     getAllHomeBusiness: builder.query({
-    //       query: ({ businessRole }) => {
-    //         return {
-    //           url: `/business/filter-business-by-business-role?businessRole=${businessRole}`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    AddFaq: builder.mutation({
+      query: (formData) => {
+        return {
+          url: "/faqs",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     getAllFeturesBusiness: builder.query({
-    //   query: ({ businessRole, country }) => {
-    //     let url = `/business/featured-business?businessRole=${businessRole}`;
-    //     if (country) {
-    //       url += `&country=${country}`;
-    //     }
-    //     return {
-    //       url,
-    //       method: "GET",
-    //     };
-    //   },
-    //   providesTags: ["updateProfile"],
-    // }),
+    updateFaq: builder.mutation({
+      query: ({ data, id }) => {
+        return {
+          url: `/faqs/${id}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     getAllBusinessHome: builder.query({
-    //       query: () => {
-    //         return {
-    //           url: `/business/all-business`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
+    deleteFaq: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/faqs/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //  getAllBusinessMostView: builder.query({
-    //   query: ({ userId, role, country } = {}) => {
-    //     let queryParams = [];
+    getProfile: builder.query({
+      query: () => {
+        return {
+          url: `/users/me`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //     if (userId) queryParams.push(`userId=${userId}`);
-    //     if (role) queryParams.push(`role=${role}`);
-    //     if (country) queryParams.push(`country=${country}`);
+    updateProfileData: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/users/update-profile`,
+          method: "PUT",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+    updateProfileImage: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/users/update-profile-image`,
+          method: "PUT",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     return {
-    //       url: `/business/most-viewed${queryString}`,
-    //       method: "GET",
-    //     };
-    //   },
-    //   providesTags: ["updateProfile"],
-    // }),
+    getPrivecy: builder.query({
+      query: () => {
+        return {
+          url: `/privacy-policy`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //     deleteBusiness: builder.mutation({
-    //         query: (businessId) => {
-    //             return {
-    //                 url: `/business/delete-business?businessId=${businessId}`,
-    //                 method: "DELETE",
-    //             };
-    //         },
-    //          invalidatesTags: ['updateProfile']
-    //     }),
+    AddPrivecy: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/privacy-policy",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     // getFaq: builder.query({
-    //     //     query: () => {
-    //     //         return {
-    //     //             url: `/manage/get-faq`,
-    //     //             method: "GET",
-    //     //         };
-    //     //     },
-    //     //     providesTags: ["updateProfile"],
-    //     // }),
+    updatePrivecy: builder.mutation({
+      query: ({ data, id }) => {
+        return {
+          url: `/privacy-policy/${id}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     addInterest: builder.mutation({
-    //       query: (data) => {
-    //         return {
-    //           url: "interested/make-interested",
-    //           method: "POST",
-    //           body: data,
-    //         };
-    //       },
-    //       invalidatesTags: ["updateProfile"],
-    //     }),
+    updateTerms: builder.mutation({
+      query: ({ data, id }) => {
+        return {
+          url: `/terms-&-conditions/${id}`,
+          method: "PATCH",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     addBusinessValuation: builder.mutation({
-    //       query: (data) => {
-    //         return {
-    //           url: "/business/business-valuation",
-    //           method: "POST",
-    //           body: data,
-    //         };
-    //       },
-    //       invalidatesTags: ["updateProfile"],
-    //     }),
+    getTerms: builder.query({
+      query: () => {
+        return {
+          url: `/terms-&-conditions`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //     addBusiness: builder.mutation({
-    //       query: (data) => {
-    //         return {
-    //           url: "/business/create-business",
-    //           method: "POST",
-    //           body: data,
-    //         };
-    //       },
-    //       invalidatesTags: ["updateProfile"],
-    //     }),
+    AddTerms: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/terms-&-conditions",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     addContact: builder.mutation({
-    //       query: (data) => {
-    //         return {
-    //           url: "/home/help-and-support",
-    //           method: "POST",
-    //           body: data,
-    //         };
-    //       },
-    //       invalidatesTags: ["updateProfile"],
-    //     }),
+    getAllAdminAccess: builder.query({
+      query: ({ page, limit, searchTerm }) => {
+        return {
+          url: `/accesses-provide?searchTerm=${searchTerm}&page=${page}&limit=${limit}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //     updateSingle: builder.mutation({
-    //       query: ({ formData, businessId, user }) => {
-    //         return {
-    //           url: `/business/update-business?businessId=${businessId}&user=${user}`,
-    //           method: "PATCH",
-    //           body: formData,
-    //         };
-    //       },
-    //       invalidatesTags: ["updateProfile"],
-    //     }),
+    getAllAccessFunctions: builder.query({
+      query: () => {
+        return {
+          url: `/access-functions`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
 
-    //   getAllBusinesFilter: builder.query({
-    //   query: ({
-    //     category,
-    //     location,
-    //     country,
-    //     ageOfListing,
-    //     state,
-    //     city,
-    //     sortBy,
-    //     businessType,
-    //     ownerShipType,
-    //     askingPrice,
-    //     searchText,
-    //     businessRole,
-    //     subCategory
-    //   }) => {
-    //     let url = `/business/filter-business`;
+    AddAdminProvide: builder.mutation({
+      query: (data) => {
+        return {
+          url: "/accesses-provide",
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     const params = [];
-    //     if (category) params.push(`category=${encodeURIComponent(category)}`);
-    //     if (subCategory) params.push(`subCategory=${encodeURIComponent(subCategory)}`);
-    //     if (location) params.push(`location=${encodeURIComponent(location)}`);
-    //     if (country) params.push(`country=${encodeURIComponent(country)}`);
-    //      if (state) params.push(`country=${encodeURIComponent(state)}`);
-    //       if (city) params.push(`country=${encodeURIComponent(city)}`);
-    //     if (ageOfListing) params.push(`ageOfListing=${encodeURIComponent(ageOfListing)}`);
-    //     if (sortBy) params.push(`sortBy=${encodeURIComponent(sortBy)}`);
-    //     if (businessType) params.push(`businessType=${encodeURIComponent(businessType)}`);
-    //     if (ownerShipType) params.push(`ownerShipType=${encodeURIComponent(ownerShipType)}`);
-    //     if (askingPrice) params.push(`askingPrice=${encodeURIComponent(askingPrice)}`);
-    //     if (searchText) params.push(`searchText=${encodeURIComponent(searchText)}`);
-    //     if (businessRole) params.push(`businessRole=${encodeURIComponent(businessRole)}`);
+    deleteAdminAccess: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/accesses-provide/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
 
-    //     if (params.length > 0) {
-    //       url += `?${params.join("&")}`;
-    //     }
-
-    //     return {
-    //       url,
-    //       method: "GET",
-    //     };
-    //   },
-    //   providesTags: ["updateProfile"],
-    // }),
-
-    //     getPlane: builder.query({
-    //       query: ({ role }) => {
-    //         return {
-    //           url: `/subscription/get-subscription-plan?role=${role}`,
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
-    //     postCheckout: builder.mutation({
-    //       query: (data) => {
-    //         return {
-    //           url: "/payment/checkout",
-    //           method: "POST",
-    //           body: data,
-    //         };
-    //       },
-    //       invalidatesTags: ["updateProfile"],
-    //     }),
-
-    //     singleGetCoupon: builder.query({
-    //       query: ({ couponCode }) => ({
-    //         url: `/coupon/get-single-coupon?couponCode=${couponCode}`,
-    //         method: "GET",
-    //       }),
-    //       providesTags: ["updateProfile"],
-    //     }),
-
-    //     getCategtory: builder.query({
-    //       query: () => {
-    //         return {
-    //           url: "/category/get-all-category",
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
-
-    //     getTopCategtory: builder.query({
-    //       query: () => {
-    //         return {
-    //           url: "/business/top-category",
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
-
-    //     getAllFormate: builder.query({
-    //       query: () => {
-    //         return {
-    //           url: "/formation/get-all-format",
-    //           method: "GET",
-    //         };
-    //       },
-    //       providesTags: ["updateProfile"],
-    //     }),
-
-    // postInterestFormation: builder.mutation({
-    //   query: (data) => {
-    //     return {
-    //       url: "/formation/make-user-interested",
-    //       method: "POST",
-    //       body: data,
-    //     };
-    //   },
-    //   invalidatesTags: ["updateProfile"],
-    // }),
+    updateAccessFunction: builder.mutation({
+      query: (data) => {
+        return {
+          url: `/accesses-provide`,
+          method: "PUT",
+          body: data,
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
   }),
 });
 
@@ -420,5 +433,34 @@ export const {
   useBlockCustomerMutation,
   useAddSubscriptionMutation,
   useGetSubscriptionQuery,
-  useUpdateSubscriptionMutation
+  useUpdateSubscriptionMutation,
+  useAddAddpromotionMutation,
+  useGetAddPromotionQuery,
+  useUpdateAddPromotionMutation,
+  useDeleteAddPromotionMutation,
+  useGetFaqQuery,
+  useAddFaqMutation,
+  useUpdateFaqMutation,
+  useDeleteFaqMutation,
+  useGetProfileQuery,
+  useUpdateProfileDataMutation,
+  useUpdateProfileImageMutation,
+  useAddPrivecyMutation,
+  useGetPrivecyQuery,
+  useAddTermsMutation,
+  useGetTermsQuery,
+  useUpdatePrivecyMutation,
+  useUpdateTermsMutation,
+  useGetAllAdminAccessQuery,
+  useAddAdminProvideMutation,
+  useUpdateAccessFunctionMutation,
+  useDeleteAdminAccessMutation,
+  useGetAllAccessFunctionsQuery,
+  useGetSingleBarberOwnerQuery,
+  useGetAllSupportQuery,
+  useGetSingleSupportQuery,
+  useUpdateSupportMutation,
+  useGetSingleAllBarberQuery,
+  useGetAllSubscriberQuery,
+  useGetDasboardQuery
 } = businessApi;

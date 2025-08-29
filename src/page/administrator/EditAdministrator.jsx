@@ -1,61 +1,100 @@
-import { Form, Input, Modal, Select, Checkbox } from "antd";
-import React, { useState } from "react";
-import { IoCameraOutline } from "react-icons/io5";
-
-const EditAdministrator = ({ editModal, setEditModal }) => {
+import { Form, Input, Modal, Select, Checkbox, message } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  useGetAllAccessFunctionsQuery,
+  useUpdateAccessFunctionMutation,
+} from "../redux/api/manageApi";
+import { useMemo } from "react";
+const EditAdministrator = ({ editModal, setEditModal, selectedUser }) => {
+  const adminId = selectedUser?.key;
+  console.log(selectedUser)
   const [form] = Form.useForm();
   const [imagePreview, setImagePreview] = useState(null);
-  const [checkAll, setCheckAll] = useState(true);
-  const [checkedList, setCheckedList] = useState([
-    "Dashboard",
-    "User Management",
-    "Barber owner",
-    "Subscriptions",
-    "Support",
-    "Settings",
-  ]);
+  const [checkedList, setCheckedList] = useState([]);
+  const [role, setRole] = useState(null);
 
-  const accessOptions = [
-    "Dashboard",
-    "User Management",
-    "Barber owner",
-    "Subscriptions",
-    "Support",
-    "Settings",
-  ];
+  const { data: accessCheckFunctionData } = useGetAllAccessFunctionsQuery();
+  const [updateAccessFunction] = useUpdateAccessFunctionMutation();
+
+const accessOptions = useMemo(() => {
+  return accessCheckFunctionData?.data?.map((item) => ({
+    label: item.function,
+    value: item.id,
+  })) || [];
+}, [accessCheckFunctionData]);
+
+
+useEffect(() => {
+  if (selectedUser && accessOptions.length > 0) {
+    const matchedIds = accessOptions
+      .filter((opt) => selectedUser.access?.includes(opt.label))
+      .map((opt) => opt.value);
+
+    setCheckedList(matchedIds);
+    setRole(selectedUser.role);
+
+    form.setFieldsValue({
+      email: selectedUser?.email,
+      fullName: selectedUser?.name,
+      role: selectedUser?.role,
+    });
+
+    setImagePreview(selectedUser?.avatar);
+  }
+}, [selectedUser, accessOptions, form]);
+
 
   const handleCancel = () => {
     form.resetFields();
     setImagePreview(null);
+    setCheckedList([]);
+    setRole(null);
     setEditModal(false);
   };
 
-  const handleSubmit = async (values) => {
-    console.log({
-      ...values,
-      permissions: checkAll ? "All" : checkedList,
-    });
-  };
+  const handleSubmit = async () => {
+    try {
+      const data = {
+        adminId,
+        function: checkedList, 
+      };
+      console.log(data)
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImagePreview(imageUrl);
+      const response = await updateAccessFunction(data).unwrap();
+      message.success(response?.message);
+      handleCancel();
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message);
     }
   };
 
-  const handleCheckAllChange = (e) => {
-    const isChecked = e.target.checked;
-    setCheckAll(isChecked);
-    setCheckedList(isChecked ? accessOptions : []);
+  const handleRoleChange = (value) => {
+    setRole(value);
+
+    if (value === "SUPER_ADMIN") {
+      setCheckedList(accessOptions.map((o) => o.value));
+    }
   };
 
-  const handleCheckboxGroupChange = (list) => {
+const handleCheckboxGroupChange = (list) => {
+  if (role === "ADMIN") {
+    // Find the "ALL" value from accessOptions (case-sensitive match with data)
+    const allOption = accessOptions.find((o) => o.label === "ALL")?.value;
+
+    // If the "ALL" checkbox is selected
+    if (allOption && list.includes(allOption)) {
+      // Select all options
+      setCheckedList(accessOptions.map((o) => o.value));
+    } else {
+      // Otherwise, set only the selected items
+      setCheckedList(list);
+    }
+  } else {
+    // For non-ADMIN roles, just update the checked list
     setCheckedList(list);
-    setCheckAll(list.length === accessOptions.length);
-  };
-
+  }
+};
   return (
     <Modal
       centered
@@ -65,7 +104,9 @@ const EditAdministrator = ({ editModal, setEditModal }) => {
       width={450}
     >
       <div className="mb-6 mt-2">
-        <h2 className="text-center font-semibold text-xl mb-6">Edit</h2>
+        <h2 className="text-center font-semibold text-xl mb-6">
+          Edit Administrator
+        </h2>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -73,14 +114,7 @@ const EditAdministrator = ({ editModal, setEditModal }) => {
           className="px-2"
         >
           {/* Profile Picture */}
-          <div className="relative w-[120px] h-[120px] mx-auto mb-6">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              id="imgUpload"
-              style={{ display: "none" }}
-            />
+          <div className="w-[120px] h-[120px] mx-auto mb-6">
             <img
               src={
                 imagePreview ||
@@ -89,62 +123,27 @@ const EditAdministrator = ({ editModal, setEditModal }) => {
               alt="Profile"
               className="w-[120px] h-[120px] rounded-full object-cover border"
             />
-            <label
-              htmlFor="imgUpload"
-              className="absolute bottom-1 right-1 bg-[#D17C51] w-7 h-7 rounded-full flex items-center justify-center cursor-pointer"
-            >
-              <IoCameraOutline className="text-white text-base" />
-            </label>
           </div>
 
           {/* Name */}
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: "Please enter name" }]}
-          >
-            <Input placeholder="Type here" />
+          <Form.Item label="Name" name="fullName">
+            <Input disabled />
           </Form.Item>
 
           {/* Email */}
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[{ required: true, message: "Please enter email" }]}
-          >
-            <Input placeholder="Type here" />
-          </Form.Item>
-
-          {/* Contact Number */}
-          <Form.Item
-            label="Contact Number"
-            name="contact"
-            rules={[{ required: true, message: "Please enter contact number" }]}
-          >
-            <Input placeholder="Type here" />
-          </Form.Item>
-
-          {/* Password */}
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Please enter password" }]}
-          >
-            <Input.Password placeholder="Type here" />
+          <Form.Item label="Email" name="email">
+            <Input disabled />
           </Form.Item>
 
           {/* Role */}
-          <Form.Item
-            label="Role"
-            name="role"
-            rules={[{ required: true, message: "Please select a role" }]}
-          >
+          <Form.Item label="Role" name="role">
             <Select
-              placeholder="Select role"
+              disabled
               options={[
-                { label: "Owner", value: "Owner" },
-                { label: "Admin", value: "Admin" },
+                { label: "Super Admin", value: "SUPER_ADMIN" },
+                { label: "Admin", value: "ADMIN" },
               ]}
+              onChange={handleRoleChange}
             />
           </Form.Item>
 
@@ -152,17 +151,13 @@ const EditAdministrator = ({ editModal, setEditModal }) => {
           <label className="block text-sm font-medium text-black mb-1">
             Give Access To
           </label>
-          <div>
-            <Checkbox checked={checkAll} onChange={handleCheckAllChange}>
-              All
-            </Checkbox>
-            <div className="grid grid-cols-2 ">
-              <Checkbox.Group
-                options={accessOptions}
-                value={checkedList}
-                onChange={handleCheckboxGroupChange}
-              />
-            </div>
+          <div className="grid grid-cols-2 mt-2">
+            <Checkbox.Group
+              options={accessOptions}
+              value={checkedList}
+              onChange={handleCheckboxGroupChange}
+              disabled={role === "SUPER_ADMIN"}
+            />
           </div>
 
           {/* Buttons */}

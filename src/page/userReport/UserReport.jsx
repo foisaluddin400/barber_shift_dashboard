@@ -1,29 +1,42 @@
 import React, { useState, useMemo } from "react";
 import { Navigate } from "../../Navigate";
-import { Table, Input, Tag } from "antd";
+import { Table, Input, Tag, Popconfirm, message, Pagination } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import ReplyUser from "./ReplyUser";
 import { useGetAllReportsQuery } from "../redux/api/manageApi";
 
-
 const UserReport = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+   const [searchTerm, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+console.log(searchTerm)
   const [selectedUser, setSelectedUser] = useState(null);
-  console.log(selectedUser)
+  console.log(selectedUser);
   // API Call
-  const { data: reportData, isLoading } = useGetAllReportsQuery();
-
+  const { data: reportData, isLoading } = useGetAllReportsQuery({
+    searchTerm,
+    page: currentPage,
+    limit: pageSize,
+  });
+  const handlePageChange = (page) => setCurrentPage(page);
+  const handleDeleteCategory = async (id) => {
+    console.log(id);
+    // try {
+    //   const res = await deleteCategory(id).unwrap();
+    //   message.success(res?.message);
+    // } catch (error) {
+    //   message.error(error?.data?.message || "Error deleting FAQ");
+    // }
+  };
   // data mapping for table
   const tableData = useMemo(() => {
     if (!reportData?.data) return [];
     return reportData.data.map((item, index) => ({
       key: item.reportId,
-      id:item.userId,
+      id: item.userId,
       fullName: item.userName,
-      contact: item.userPhoneNumber
-        ? `${item.userPhoneNumber}`
-        : "No contact",
+      contact: item.userPhoneNumber ? `${item.userPhoneNumber}` : "No contact",
       region: item.userAddress || "N/A",
       status: item.status,
       message: item.message,
@@ -31,7 +44,7 @@ const UserReport = () => {
     }));
   }, [reportData]);
 
-    const handleEdit = (record) => {
+  const handleEdit = (record) => {
     setSelectedUser(record);
     setOpenAddModal(true);
   };
@@ -85,9 +98,17 @@ const UserReport = () => {
           >
             Reply
           </button>
-          <button className="bg-green-600 px-4 py-1 border rounded text-white">
-            Argon
-          </button>
+{/* 
+          <Popconfirm
+            title="Are you sure you want to delete this category?"
+            onConfirm={() => handleDeleteCategory(record?.key)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button className="bg-green-600 px-4 py-1 border rounded text-white">
+              Argon
+            </button>
+          </Popconfirm> */}
         </div>
       ),
     },
@@ -106,7 +127,7 @@ const UserReport = () => {
           placeholder="Search"
           prefix={<SearchOutlined />}
           className="w-64 px-4 py-2 rounded-lg bg-white"
-          onChange={(e) => setSearchTerm(e.target.value)}
+         onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
@@ -122,7 +143,15 @@ const UserReport = () => {
           />
         </div>
       </div>
-
+   <div className="mt-4 flex justify-center">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={reportData?.meta?.total || 0}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+          />
+        </div>
       <ReplyUser
         setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}

@@ -1,23 +1,39 @@
-import { Table, Tag, Input, Dropdown } from "antd";
+import { Table, Input, Pagination } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { IoIosArrowDown } from "react-icons/io";
 import { Navigate } from "../../Navigate";
+import { useGetAllSubscriberQuery } from "../redux/api/manageApi";
+import { useState } from "react";
 
 const PremiumSubscriber = () => {
-  const items = [
-    {
-      label: <button>Blocked</button>,
-      key: "0",
-    },
-    {
-      label: <button>Active</button>,
-      key: "1",
-    },
-    {
-      label: <button>All Customers</button>,
-      key: "2",
-    },
-  ];
+      const [searchTerm, setSearch] = useState("");
+  console.log(searchTerm)
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const pageSize = 10;
+  const { data: subscriber, isLoading } = useGetAllSubscriberQuery({
+        
+    searchTerm:searchTerm,
+     page: currentPage,
+    limit: pageSize,
+  });
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Transform API data into table-friendly format
+  const tableData = subscriber?.data?.map((item, index) => ({
+    key: item.id,
+    sl: index + 1,
+    name: item.fullName,
+    email: item.email,
+    phone: item.phoneNumber,
+    joiningDate: new Date(item.startDate).toLocaleDateString(),
+    endDate: new Date(item.endDate).toLocaleDateString(),
+    interval: item.offer?.duration,
+    plan: item.offer?.title,
+    fee: `$${item.offer?.price} ${item.offer?.currency?.toUpperCase()}`,
+    status: item.paymentStatus === "COMPLETED" ? "Paid" : "Due",
+  }));
 
   const columns = [
     {
@@ -29,16 +45,16 @@ const PremiumSubscriber = () => {
       title: "Full Name",
       dataIndex: "name",
       key: "name",
-      render: (text, record) => (
-        <div className="flex items-center gap-2">
-          <img
-            src={record.avatar}
-            alt="avatar"
-            className="w-8 h-8 rounded-full object-cover"
-          />
-          <span>{text}</span>
-        </div>
-      ),
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Joining Date",
@@ -46,7 +62,17 @@ const PremiumSubscriber = () => {
       key: "joiningDate",
     },
     {
-      title: "Subscription Interval",
+      title: "End Date",
+      dataIndex: "endDate",
+      key: "endDate",
+    },
+    {
+      title: "Plan",
+      dataIndex: "plan",
+      key: "plan",
+    },
+    {
+      title: "Interval",
       dataIndex: "interval",
       key: "interval",
       render: (interval) => (
@@ -76,117 +102,12 @@ const PremiumSubscriber = () => {
     },
   ];
 
-  const data = [
-    {
-      key: "1",
-      sl: "#1233",
-      name: "Kathryn Murp",
-      avatar: "https://randomuser.me/api/portraits/women/65.jpg",
-      joiningDate: "12/04/24",
-      interval: "Silver",
-      fee: "$14.99",
-      status: "Due",
-    },
-    {
-      key: "2",
-      sl: "#1233",
-      name: "Devon Lane",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      joiningDate: "12/04/24",
-      interval: "Gold",
-      fee: "$29.99",
-      status: "Paid",
-    },
-    {
-      key: "3",
-      sl: "#1233",
-      name: "Foysal Rahman",
-      avatar: "https://randomuser.me/api/portraits/men/74.jpg",
-      joiningDate: "12/04/24",
-      interval: "Silver",
-      fee: "$49.99",
-      status: "Paid",
-    },
-    {
-      key: "4",
-      sl: "#1233",
-      name: "Hari Danang",
-      avatar: "https://randomuser.me/api/portraits/men/62.jpg",
-      joiningDate: "12/04/24",
-      interval: "Gold",
-      fee: "$14.99",
-      status: "Due",
-    },
-    {
-      key: "5",
-      sl: "#1233",
-      name: "Floyd Miles",
-      avatar: "https://randomuser.me/api/portraits/men/11.jpg",
-      joiningDate: "12/04/24",
-      interval: "Diamond",
-      fee: "$14.99",
-      status: "Due",
-    },
-    {
-      key: "6",
-      sl: "#1233",
-      name: "Eleanor Pena",
-      avatar: "https://randomuser.me/api/portraits/women/20.jpg",
-      joiningDate: "12/04/24",
-      interval: "Silver",
-      fee: "$49.99",
-      status: "Due",
-    },
-    {
-      key: "7",
-      sl: "#1233",
-      name: "Devon Lane",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      joiningDate: "12/04/24",
-      interval: "Gold",
-      fee: "$29.99",
-      status: "Paid",
-    },
-    {
-      key: "8",
-      sl: "#1233",
-      name: "Hari Danang",
-      avatar: "https://randomuser.me/api/portraits/men/62.jpg",
-      joiningDate: "12/04/24",
-      interval: "Silver",
-      fee: "$49.99",
-      status: "Paid",
-    },
-    {
-      key: "9",
-      sl: "#1233",
-      name: "Devon Lane",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      joiningDate: "12/04/24",
-      interval: "Gold",
-      fee: "$14.99",
-      status: "Due",
-    },
-    {
-      key: "10",
-      sl: "#1233",
-      name: "Hari Danang",
-      avatar: "https://randomuser.me/api/portraits/men/62.jpg",
-      joiningDate: "12/04/24",
-      interval: "Diamond",
-      fee: "$14.99",
-      status: "Paid",
-    },
-  ];
-
   return (
     <div className="p-1">
       <div className="flex justify-between items-center">
-        <div className="flex items-center">
-          <Navigate title={"Premium Subscribers"} />
-          
-        </div>
+        <Navigate title={"Premium Subscribers"} />
         <Input
+           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search"
           prefix={<SearchOutlined />}
           className="w-64 px-4 py-2 rounded-lg bg-white"
@@ -194,31 +115,27 @@ const PremiumSubscriber = () => {
       </div>
 
       <div className="p-2">
-        <div className="flex justify-between items-center mb-4">
-          <Dropdown
-            menu={{ items }}
-            trigger={["click"]}
-          >
-            <button
-              className="flex gap-2 items-center border text-[#9C5F46] border-[#D17C51] p-1 px-3 rounded"
-              onClick={(e) => e.preventDefault()}
-            >
-              Selected User
-              <IoIosArrowDown />
-            </button>
-          </Dropdown>
-        </div>
-
         <div className="rounded-md overflow-hidden">
           <Table
+            loading={isLoading}
             columns={columns}
-            dataSource={data}
+            dataSource={tableData}
             pagination={false}
             rowClassName="border-b border-gray-300"
-            scroll={{ x: 800 }} 
+            scroll={{ x: 1200 }}
           />
         </div>
       </div>
+       <div className="mt-4 flex justify-center">
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={subscriber?.meta?.total || 0}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+            
+          />
+        </div>
     </div>
   );
 };

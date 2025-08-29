@@ -15,6 +15,7 @@ const Customer = () => {
     searchTerm:searchTerm,
      page: currentPage,
     limit: pageSize,});
+    console.log(customerData)
 
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);

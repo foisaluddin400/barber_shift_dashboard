@@ -1,33 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Input } from "antd";
 import { EyeOutlined, SearchOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
 import { Navigate } from "../../Navigate";
 import ReplyUser from "./ReplyUser";
+import { useGetAllSupportQuery } from "../redux/api/manageApi";
 
 const Support = () => {
   const [open, setOpen] = useState(false);
-  const [selectedShop, setSelectedShop] = useState(null);
+  const [selectedSupport, setSelectedSupport] = useState(null);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const dataSource = [
-    {
-      key: "1",
-      shopName: "Cameron Salons",
-      address: "1901 Thornridge Cir. Shiloh, Hawaii 81063",
-      genderCategory: "Male",
-      category: "Skin care",
-      ownerName: "Mike Smith",
-      email: "sadgfjdg@gmail.com",
-      phone: "+3489 9999 9778",
-      bankName: "AB Bank",
-      accountHolder: "Dianne Russell",
-      accountNumber: "6575675678676",
-      branchCode: "4575467",
-      branchCity: "New York",
-      city: "Us",
-      image: "http://10.0.60.189:5000/uploads/360_F_238084232_5XhGUddDZezzJxybvVXzfPp8cOKAuqRp.jpg",
-    },
-  ];
+  const [filteredData, setFilteredData] = useState([]);
+
+  const { data: supportData } = useGetAllSupportQuery();
+
+  const [selectedUser, setSelectedUser] = useState(null);
+  const handleEdit = (record) => {
+    setSelectedUser(record);
+    setOpenAddModal(true);
+  };
+  useEffect(() => {
+    if (supportData?.data) {
+
+      const formattedData = supportData.data.map((item, index) => ({
+        key: index + 1,
+        userName: item.userName,
+        id: item.userId,
+        message: item.message,
+        status: item.status,
+        type: item.type,
+        supportId: item.supportId,
+      }));
+      setFilteredData(formattedData);
+    }
+  }, [supportData]);
+  console.log(supportData)
 
   const columns = [
     {
@@ -36,52 +42,36 @@ const Support = () => {
       key: "key",
     },
     {
-      title: "Shop Name",
-      dataIndex: "shopName",
-      key: "shopName",
-      render: (text, record) => (
-        <div className="flex items-center space-x-2">
-          <img src={record.image} alt="Shop" className="w-8 h-8 rounded-full" />
-          <span>{text}</span>
-        </div>
-      ),
+      title: "User Name",
+      dataIndex: "userName",
+      key: "userName",
     },
     {
-      title: "phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Message",
+      dataIndex: "message",
+      key: "message",
     },
     {
-      title: "city",
-      dataIndex: "city",
-      key: "city",
-    },
-    {
-      title: "Shop Category",
-      dataIndex: "category",
-      key: "category",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <div className=" ">
-          <button
-            type="primary"
-            className="bg-[#D9F2DD] text-[#359742] rounded-full py-1 px-5"
-          >
-            Accept
-          </button>
-        </div>
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => (
+        <span
+          className={`py-1 px-3 rounded-full ${
+            status === "CLOSED" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"
+          }`}
+        >
+          {status}
+        </span>
       ),
     },
     {
       title: "View Details",
       key: "viewDetails",
-      render: (record) => (
+      render: (_, record) => (
         <Button
-          onClick={() => {
-            setSelectedShop(record);
+           onClick={() => {
+            setSelectedSupport(record);
             setOpen(true);
           }}
           shape="circle"
@@ -95,7 +85,7 @@ const Support = () => {
       key: "reply",
       render: (record) => (
         <button
-          onClick={() => setOpenAddModal(true)}
+          onClick={() => handleEdit(record)}
           className="bg-red-500 border px-4 py-1 rounded"
         >
           Reply
@@ -112,68 +102,59 @@ const Support = () => {
           placeholder="Search"
           prefix={<SearchOutlined />}
           className="w-64 px-4 py-2 rounded-lg bg-white"
+          onChange={(e) => {
+            const searchText = e.target.value.toLowerCase();
+            const filtered = supportData?.data?.filter((item) =>
+              item.userName.toLowerCase().includes(searchText)
+            );
+            setFilteredData(
+              filtered?.map((item, index) => ({
+                key: index + 1,
+                userName: item.userName,
+                message: item.message,
+                status: item.status,
+                type: item.type,
+                supportId: item.supportId,
+              }))
+            );
+          }}
         />
       </div>
-      <Table dataSource={dataSource} columns={columns} pagination={false} scroll={{ x: 900 }} />
+
+      <Table
+        dataSource={filteredData}
+        columns={columns}
+        pagination={false}
+        scroll={{ x: 900 }}
+      />
 
       <Modal
-        title="Shop Details"
+        title="Support Details"
         centered
         open={open}
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
         width={500}
       >
-        {selectedShop && (
+        {selectedSupport && (
           <div>
             <p>
-              <strong>Shop Name:</strong> {selectedShop.shopName}
+              <strong>User Name:</strong> {selectedSupport.userName}
             </p>
             <p>
-              <strong>Shop Address:</strong> {selectedShop.address}
+              <strong>Message:</strong> {selectedSupport.message}
             </p>
             <p>
-              <strong>Shop Gender Category:</strong>{" "}
-              {selectedShop.genderCategory}
+              <strong>Status:</strong> {selectedSupport.status}
             </p>
             <p>
-              <strong>Shop Category:</strong> {selectedShop.category}
-            </p>
-            <p>
-              <strong>Shop Owner Name:</strong> {selectedShop.ownerName}
-            </p>
-            <p>
-              <strong>Email:</strong> {selectedShop.email}
-            </p>
-            <p>
-              <strong>Phone Number:</strong> {selectedShop.phone}
-            </p>
-            <h3 className="font-bold mt-4">Bank Info</h3>
-            <p>
-              <strong>Bank Name:</strong> {selectedShop.bankName}
-            </p>
-            <p>
-              <strong>Account Holder Name:</strong> {selectedShop.accountHolder}
-            </p>
-            <p>
-              <strong>Account Number:</strong> {selectedShop.accountNumber}
-            </p>
-            <p>
-              <strong>Enter Branch Code:</strong> {selectedShop.branchCode}
-            </p>
-            <p>
-              <strong>Branch City:</strong> {selectedShop.branchCity}
+              <strong>Type:</strong> {selectedSupport.type}
             </p>
           </div>
         )}
       </Modal>
 
-
-     
-      <ReplyUser
-        setOpenAddModal={setOpenAddModal}
-        openAddModal={openAddModal}
-      ></ReplyUser>
+      <ReplyUser setOpenAddModal={setOpenAddModal} openAddModal={openAddModal} selectedUser={selectedUser}/>
     </div>
   );
 };

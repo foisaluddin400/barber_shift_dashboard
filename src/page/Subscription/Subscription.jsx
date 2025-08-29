@@ -12,7 +12,7 @@ const Subscription = () => {
   // API Call
   const { data: subscriptionData, isLoading } = useGetSubscriptionQuery();
   console.log(subscriptionData);
-const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const handleEdit = (record) => {
     setSelectedUser(record);
     setEditModal(true);
@@ -25,7 +25,7 @@ const [selectedUser, setSelectedUser] = useState(null);
       id: index + 1,
       name: item.title,
       description: item.description,
-      duration: item.duration ,
+      duration: item.duration,
       fee: item.price,
       status: item.status,
     }));
@@ -63,7 +63,7 @@ const [selectedUser, setSelectedUser] = useState(null);
       render: (_, record) => (
         <div>
           <button
-             onClick={() => handleEdit(record)}
+            onClick={() => handleEdit(record)}
             className="rounded text-[#AB684D]"
           >
             Edit

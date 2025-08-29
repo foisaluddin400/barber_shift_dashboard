@@ -9,17 +9,16 @@ const barbers = [
   { id: 4, name: "Bahram Ferzand", image: img2, rating: 5.0 },
 ];
 
-export const BarberTiming = () => {
+export const BarberTiming = ({ singleBarber }) => {
+  console.log(singleBarber?.data?.schedule);
+
   return (
     <div className=" max-w-5xl">
       {/* Shop Barber Section */}
       <h2 className="text-[#D17C51] font-semibold text-lg mb-4">Shop Barber</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {barbers.map((barber) => (
-          <div
-            key={barber.id}
-            className="flex items-center border rounded-lg "
-          >
+          <div key={barber.id} className="flex items-center border rounded-lg ">
             <img
               src={barber.image}
               alt={barber.name}
@@ -36,21 +35,25 @@ export const BarberTiming = () => {
       </div>
 
       {/* Shop Timings Section */}
-      <h2 className="font-semibold text-xl mt-8 mb-4">Shop Timings</h2>
-      <div className="border-t border-gray-300">
-        <div className="flex justify-between py-2 border-b">
-          <span>Monday to Thursday</span>
-          <span className="font-semibold">09:00 am - 5:00 pm</span>
+
+      {singleBarber?.data?.schedule?.map((day) => (
+        <div>
+          <h2 className="font-semibold text-xl mt-8 mb-4">Shop Timings</h2>
+          <div className="border-t border-gray-300">
+            <div className="flex justify-between py-2 border-b">
+              <span>{day?.dayName}</span>
+              <span className="font-semibold">{day?.openingTime} - {day?.closingTime}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b">
+              <span>{day?.isActive ? 'Open' : 'Close'}</span>
+
+            
+            </div>
+          
+          </div>
         </div>
-        <div className="flex justify-between py-2 border-b">
-          <span>Friday & Saturday</span>
-          <span className="font-semibold">3:00 pm - 7:00 pm</span>
-        </div>
-        <div className="flex justify-between py-2">
-          <span>Sunday</span>
-          <span className="font-semibold">Closed</span>
-        </div>
-      </div>
+        
+       ))}
     </div>
   );
 };

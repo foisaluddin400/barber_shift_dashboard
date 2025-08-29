@@ -5,9 +5,15 @@ import { PersonalDetails } from "./PersonalDetails";
 import { ShopService } from "./ShopService";
 import { BarberTiming } from "./BarberTiming";
 import { ShopPhoto } from "./ShopPhoto";
+import { useParams } from "react-router-dom";
+import { useGetSingleBarberOwnerQuery } from "../redux/api/manageApi";
 
 export const BarberOwnerDetails = () => {
   const [selectedTab, setSelectedTab] = useState("personal");
+  const { id } = useParams();
+  const {data : singleBarber} = useGetSingleBarberOwnerQuery({ id }, { refetchOnMountOrArgChange: true })
+  console.log(singleBarber)
+  console.log(id)
   return (
     <div className="p-1">
       <div>
@@ -73,12 +79,12 @@ export const BarberOwnerDetails = () => {
       </div>
 
       <div className="">
-        {selectedTab === "personal" && <div><PersonalDetails></PersonalDetails></div>}
-        {selectedTab === "shop" && <div><ShopService></ShopService></div>}
+        {selectedTab === "personal" && <div><PersonalDetails singleBarber={singleBarber}></PersonalDetails></div>}
+        {selectedTab === "shop" && <div><ShopService singleBarber={singleBarber}></ShopService></div>}
 
-        {selectedTab === "barber" && <div><BarberTiming></BarberTiming></div>}
+        {selectedTab === "barber" && <div><BarberTiming singleBarber={singleBarber}></BarberTiming></div>}
 
-        {selectedTab === "photo" && <div><ShopPhoto></ShopPhoto></div>}
+        {selectedTab === "photo" && <div><ShopPhoto singleBarber={singleBarber}></ShopPhoto></div>}
       </div>
     </div>
   );

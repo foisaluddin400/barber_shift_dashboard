@@ -1,29 +1,70 @@
-import { useState } from "react";
-import {  Form, Input } from "antd";
+import { useEffect, useState } from "react";
+import { Form, Input, message } from "antd";
 import { IoCameraOutline } from "react-icons/io5";
 import { PasswordTab } from "./PasswordTab";
 import { Navigate } from "../../Navigate";
-
-
-
+import {
+  useGetProfileQuery,
+  useUpdateProfileDataMutation,
+  useUpdateProfileImageMutation,
+} from "../redux/api/manageApi";
 
 const Profile = () => {
   const [profilePic, setProfilePic] = useState(null);
   const [activeTab, setActiveTab] = useState("1");
-
+  const { data: profileData } = useGetProfileQuery();
+  const [updateProfileData] = useUpdateProfileDataMutation();
+  const [updateProfileImage] = useUpdateProfileImageMutation();
   const [form] = Form.useForm();
   const [image, setImage] = useState();
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     setImage(file);
+
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    try {
+      const response = await updateProfileImage(formData).unwrap();
+      message.success(response?.message);
+      setImage(null);
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message || "Failed to upload image ❌");
+    }
   };
 
-  
+  useEffect(() => {
+    if (profileData?.data) {
+      const admin = profileData.data;
+      form.setFieldsValue({
+        fullName: admin.fullName,
+        email: admin.email,
+        phoneNumber: admin.phoneNumber || "",
+        // address: admin.address || "",
+      });
+    }
+  }, [profileData, form]);
 
   const handleProfileUpdate = async (values) => {
-   
-   
+    console.log(values);
+    const data = {
+      phoneNumber: values?.phoneNumber,
+      fullName: values?.fullName,
+      gender: values?.gender,
+    };
+    console.log(data);
+    try {
+      const response = await updateProfileData(data).unwrap();
+
+      message.success(response?.message);
+    } catch (error) {
+      console.error(error);
+      message.error(error?.data?.message);
+    }
   };
 
   const tabItems = [
@@ -31,22 +72,17 @@ const Profile = () => {
       key: "1",
       label: "Edit Profile",
       content: (
-        <Form
-          layout="vertical"
-          form={form}
-          onFinish={handleProfileUpdate} 
-        >
-        
+        <Form layout="vertical" form={form} onFinish={handleProfileUpdate}>
           <Form.Item
-            name="first"
-            label="First Name"
+            name="fullName"
+            label="Name"
             rules={[
               { required: true, message: "Please enter your first name!" },
             ]}
           >
             <Input className="py-2" placeholder="First Name" />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="last"
             label="Last Name"
             rules={[
@@ -54,7 +90,7 @@ const Profile = () => {
             ]}
           >
             <Input className="py-2" placeholder="Last Name" />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             name="email"
@@ -65,7 +101,7 @@ const Profile = () => {
           </Form.Item>
 
           <Form.Item
-            name="contactNo"
+            name="phoneNumber"
             label="Contact No."
             rules={[
               { required: true, message: "Please enter your contact number!" },
@@ -75,11 +111,16 @@ const Profile = () => {
           </Form.Item>
 
           <Form.Item>
-           <div className="flex justify-center">
-           <button className="bg-[#9C5F46] text-white py-2 px-5" type="submit" htmlType="submit" block>
-              Save Changes
-            </button>
-           </div>
+            <div className="flex justify-center">
+              <button
+                className="bg-[#9C5F46] text-white py-2 px-5"
+                type="submit"
+                htmlType="submit"
+                block
+              >
+                Save Changes
+              </button>
+            </div>
           </Form.Item>
         </Form>
       ),
@@ -93,62 +134,64 @@ const Profile = () => {
 
   return (
     <div className="p-1">
-      <Navigate title={'Profile'}></Navigate>
+      <Navigate title={"Profile"}></Navigate>
       <div className="">
-      <div className="max-w-xl mx-auto mt-8 rounded-lg lg:p-6 ">
-      {/* Profile Picture Section */}
-      <div className="text-center mb-6">
-        <div className="relative w-[140px] h-[124px] mx-auto">
-          <input
-            type="file"
-            onChange={handleImageChange}
-            id="img"
-            style={{ display: "none" }}
-          />
-          <img
-            style={{ width: 140, height: 140, borderRadius: "100%" }}
-            src={`${
-              image
-                ? URL.createObjectURL(image)
-                : `ff`
-            }`}
-            alt="Admin Profile"
-          />
-          {activeTab === "1" && (
-            <label
-              htmlFor="img"
-              className="absolute top-[80px] -right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
-            >
-              <IoCameraOutline className="text-black " />
-            </label>
-          )}
-        </div>
+        <div className="max-w-xl mx-auto mt-8 rounded-lg lg:p-6 ">
+          {/* Profile Picture Section */}
+          <div className="text-center mb-6">
+            <div className="relative w-[140px] h-[124px] mx-auto">
+              <input
+                type="file"
+                onChange={handleImageChange}
+                id="img"
+                style={{ display: "none" }}
+              />
+              <img
+                style={{ width: 140, height: 140, borderRadius: "100%" }}
+                src={
+                  image
+                    ? URL.createObjectURL(image)
+                    : profileData?.data?.image || "default.png"
+                }
+                alt="Admin Profile"
+              />
+              {activeTab === "1" && (
+                <label
+                  htmlFor="img"
+                  className="absolute top-[80px] -right-2 bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
+                >
+                  <IoCameraOutline className="text-black " />
+                </label>
+              )}
+            </div>
 
-        <p className="text-lg font-semibold mt-4">
-          name
-        </p>
-      </div>
+            <p className="text-lg font-semibold mt-4">
+              {profileData?.data?.fullName || "Name"}
+            </p>
+          </div>
 
-      {/* Custom Tabs Section */}
-      <div className="mb-4">
-        <div className="flex space-x-6 justify-center mb-4">
-          {tabItems.map((item) => (
-            <button
-              key={item.key}
-              className={`py-2 font-medium ${
-                activeTab === item.key
-                  ? "border-b border-[#9C5F46] text-[#9C5F46]"
-                  : "text-black hover:text-[#02111E]"
-              }`}
-              onClick={() => setActiveTab(item.key)}
-            >
-              {item.label}
-            </button>
-          ))}
+          {/* Custom Tabs Section */}
+          <div className="mb-4">
+            <div className="flex space-x-6 justify-center mb-4">
+              {tabItems.map((item) => (
+                <button
+                  key={item.key}
+                  className={`py-2 font-medium ${
+                    activeTab === item.key
+                      ? "border-b border-[#9C5F46] text-[#9C5F46]"
+                      : "text-black hover:text-[#02111E]"
+                  }`}
+                  onClick={() => setActiveTab(item.key)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <div>
+              {tabItems.find((item) => item.key === activeTab)?.content}
+            </div>
+          </div>
         </div>
-        <div>{tabItems.find((item) => item.key === activeTab)?.content}</div>
-      </div>
-    </div>
       </div>
     </div>
   );
