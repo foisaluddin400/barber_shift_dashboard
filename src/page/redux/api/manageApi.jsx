@@ -188,6 +188,17 @@ const businessApi = baseApi.injectEndpoints({
       invalidatesTags: ["updateProfile"],
     }),
 
+     deleteSubscription: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/subscription-plans/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["updateProfile"],
+    }),
+
+
     getAddPromotion: builder.query({
       query: () => {
         return {
@@ -462,5 +473,6 @@ export const {
   useUpdateSupportMutation,
   useGetSingleAllBarberQuery,
   useGetAllSubscriberQuery,
-  useGetDasboardQuery
+  useGetDasboardQuery,
+  useDeleteSubscriptionMutation
 } = businessApi;

@@ -31,6 +31,7 @@ import AdPromotional from "../page/adpromotion/AdPromotional";
 import AllShopRegistration from "../components/Dashboard/AllShopRegistration";
 import Support from "../page/support/Support";
 import ProtectedRoute from "../protectedRoute/ProtectedRoute";
+import AdminProtect from "../protectedRoute/AdminProtect";
 
 
 
@@ -74,7 +75,7 @@ export const router = createBrowserRouter([
 
       {
         path: "/dashboard/admin",
-        element: <Administrator></Administrator>
+        element: <AdminProtect><Administrator></Administrator></AdminProtect>
       },
       
 

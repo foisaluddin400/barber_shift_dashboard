@@ -35,7 +35,7 @@ const AdPromotional = () => {
             <span className="flex gap-2">Ads</span>
           </div>
         </div>
-        <div
+        {/* <div
           onClick={() => setSelectedTab("photo")}
           className={` py-2 px-5 border rounded border-[#D17C51]  cursor-pointer ${
             selectedTab === "photo" ? "bg-[#D17C51] text-white " : " "
@@ -44,7 +44,7 @@ const AdPromotional = () => {
           <div className="flex justify-between px-5">
             <span className="flex gap-2">Videos</span>
           </div>
-        </div>
+        </div> */}
       </div>
       {selectedTab === "personal" && (
         <div>

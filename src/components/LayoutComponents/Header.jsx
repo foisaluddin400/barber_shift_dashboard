@@ -26,6 +26,7 @@ import {
 import { RiShieldUserLine } from "react-icons/ri";
 import { BsSubstack } from "react-icons/bs";
 import { HiSupport } from "react-icons/hi";
+import { useGetProfileQuery } from "../../page/redux/api/manageApi";
 
 const items = [
   {
@@ -124,7 +125,8 @@ const Header = () => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [expandedKeys, setExpandedKeys] = useState([]);
   const navigate = useNavigate();
-
+  const { data: profileData } = useGetProfileQuery();
+  console.log(profileData)
   const contentRef = useRef({});
 
   const onParentClick = (key) => {
@@ -184,14 +186,14 @@ const Header = () => {
               key={placement}
             >
               <div className="bg-[#AB684D] h-screen -m-6">
-              <div className="custom-sidebar-logo flex justify-center">
-        <div>
-          <div className="flex justify-center">
-            <img src={logo} alt="Logo" className="w-[40px]" />
-          </div>
-          <h1 className="text-white italic">Barber Time</h1>
-        </div>
-      </div>
+                <div className="custom-sidebar-logo flex justify-center">
+                  <div>
+                    <div className="flex justify-center">
+                      <img src={logo} alt="Logo" className="w-[40px]" />
+                    </div>
+                    <h1 className="text-white italic">Barber Time</h1>
+                  </div>
+                </div>
 
                 <div className="menu-items">
                   {items.map((item) => (
@@ -200,8 +202,8 @@ const Header = () => {
                         to={item.link}
                         className={`menu-item my-4 mx-5 py-3 px-3 flex items-center cursor-pointer ${
                           selectedKey === item.key
-                         ? "bg-[#D17C51] text-[white] rounded-tr-md rounded-br-md"
-                    : "bg-white text-[#AB684D] rounded-tr-md rounded-br-md hover:bg-gray-200"
+                            ? "bg-[#D17C51] text-[white] rounded-tr-md rounded-br-md"
+                            : "bg-white text-[#AB684D] rounded-tr-md rounded-br-md hover:bg-gray-200"
                         }`}
                         onClick={(e) => {
                           if (item.children) {
@@ -213,10 +215,8 @@ const Header = () => {
                           }
                         }}
                       >
-                         <h1 className="mr-3">{item.icon}</h1>
-                        <span className="block w-full ">
-                          {item.label}
-                        </span>
+                        <h1 className="mr-3">{item.icon}</h1>
+                        <span className="block w-full ">{item.label}</span>
 
                         {item.children && (
                           <FaChevronRight
@@ -252,8 +252,8 @@ const Header = () => {
                               }`}
                               onClick={() => {
                                 setSelectedKey(child.key);
-                                setExpandedKeys([]); // Collapse all expanded items
-                                onClose(); // Close the drawer navigation
+                                setExpandedKeys([]);
+                                onClose(); 
                               }}
                             >
                               <span className="block w-full text-black">
@@ -296,8 +296,8 @@ const Header = () => {
                 />
               </div>
               <div className="text-end">
-                <h3>{"Loading..."}</h3>
-                <h4 className="text-sm">Admin</h4>
+                <h3>{profileData?.data?.fullName}</h3>
+                <h4 className="text-sm">{profileData?.data?.role}</h4>
               </div>
             </div>
           </Link>

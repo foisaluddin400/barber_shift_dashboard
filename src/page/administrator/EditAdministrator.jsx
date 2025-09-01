@@ -5,9 +5,9 @@ import {
   useUpdateAccessFunctionMutation,
 } from "../redux/api/manageApi";
 import { useMemo } from "react";
+
 const EditAdministrator = ({ editModal, setEditModal, selectedUser }) => {
   const adminId = selectedUser?.key;
-  console.log(selectedUser)
   const [form] = Form.useForm();
   const [imagePreview, setImagePreview] = useState(null);
   const [checkedList, setCheckedList] = useState([]);
@@ -16,33 +16,36 @@ const EditAdministrator = ({ editModal, setEditModal, selectedUser }) => {
   const { data: accessCheckFunctionData } = useGetAllAccessFunctionsQuery();
   const [updateAccessFunction] = useUpdateAccessFunctionMutation();
 
-const accessOptions = useMemo(() => {
-  return accessCheckFunctionData?.data?.map((item) => ({
-    label: item.function,
-    value: item.id,
-  })) || [];
-}, [accessCheckFunctionData]);
+  const accessOptions = useMemo(() => {
+    return accessCheckFunctionData?.data?.map((item) => ({
+      label: item.function,
+      value: item.id,
+    })) || [];
+  }, [accessCheckFunctionData]);
 
+  // Filtered access options based on role
+  const filteredAccessOptions = role === "ADMIN"
+    ? accessOptions.filter((option) => option.label !== "ADMIN_MANAGEMENT")
+    : accessOptions;
 
-useEffect(() => {
-  if (selectedUser && accessOptions.length > 0) {
-    const matchedIds = accessOptions
-      .filter((opt) => selectedUser.access?.includes(opt.label))
-      .map((opt) => opt.value);
+  useEffect(() => {
+    if (selectedUser && accessOptions.length > 0) {
+      const matchedIds = accessOptions
+        .filter((opt) => selectedUser.access?.includes(opt.label))
+        .map((opt) => opt.value);
 
-    setCheckedList(matchedIds);
-    setRole(selectedUser.role);
+      setCheckedList(matchedIds);
+      setRole(selectedUser.role);
 
-    form.setFieldsValue({
-      email: selectedUser?.email,
-      fullName: selectedUser?.name,
-      role: selectedUser?.role,
-    });
+      form.setFieldsValue({
+        email: selectedUser?.email,
+        fullName: selectedUser?.name,
+        role: selectedUser?.role,
+      });
 
-    setImagePreview(selectedUser?.avatar);
-  }
-}, [selectedUser, accessOptions, form]);
-
+      setImagePreview(selectedUser?.avatar);
+    }
+  }, [selectedUser, accessOptions, form]);
 
   const handleCancel = () => {
     form.resetFields();
@@ -56,9 +59,8 @@ useEffect(() => {
     try {
       const data = {
         adminId,
-        function: checkedList, 
+        function: checkedList,
       };
-      console.log(data)
 
       const response = await updateAccessFunction(data).unwrap();
       message.success(response?.message);
@@ -77,24 +79,25 @@ useEffect(() => {
     }
   };
 
-const handleCheckboxGroupChange = (list) => {
-  if (role === "ADMIN") {
-    // Find the "ALL" value from accessOptions (case-sensitive match with data)
-    const allOption = accessOptions.find((o) => o.label === "ALL")?.value;
+  const handleCheckboxGroupChange = (list) => {
+    if (role === "ADMIN") {
 
-    // If the "ALL" checkbox is selected
-    if (allOption && list.includes(allOption)) {
-      // Select all options
-      setCheckedList(accessOptions.map((o) => o.value));
+      const allOption = filteredAccessOptions.find((o) => o.label === "ALL")?.value;
+
+
+      if (allOption && list.includes(allOption)) {
+
+        setCheckedList(filteredAccessOptions.map((o) => o.value));
+      } else {
+
+        setCheckedList(list);
+      }
     } else {
-      // Otherwise, set only the selected items
+
       setCheckedList(list);
     }
-  } else {
-    // For non-ADMIN roles, just update the checked list
-    setCheckedList(list);
-  }
-};
+  };
+
   return (
     <Modal
       centered
@@ -147,20 +150,18 @@ const handleCheckboxGroupChange = (list) => {
             />
           </Form.Item>
 
-          {/* Access Permissions */}
           <label className="block text-sm font-medium text-black mb-1">
             Give Access To
           </label>
           <div className="grid grid-cols-2 mt-2">
             <Checkbox.Group
-              options={accessOptions}
+              options={filteredAccessOptions} 
               value={checkedList}
               onChange={handleCheckboxGroupChange}
               disabled={role === "SUPER_ADMIN"}
             />
           </div>
 
-          {/* Buttons */}
           <button
             type="submit"
             className="w-full py-2 mt-2 bg-[#D17C51] text-white rounded-md"

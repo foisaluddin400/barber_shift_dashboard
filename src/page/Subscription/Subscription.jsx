@@ -1,14 +1,16 @@
-import { Table } from "antd";
+import { message, Table } from "antd";
 import { Navigate } from "../../Navigate";
 import { useState, useMemo } from "react";
 import { AddSubscriptionModal } from "./AddSubscriptionModal";
 import { EditSubscriptionModal } from "./EditSubscriptionModal";
-import { useGetSubscriptionQuery } from "../redux/api/manageApi";
+import { useDeleteSubscriptionMutation, useGetSubscriptionQuery } from "../redux/api/manageApi";
+import { FiEdit2 } from "react-icons/fi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const Subscription = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-
+const [deleteSubscription] = useDeleteSubscriptionMutation()
   // API Call
   const { data: subscriptionData, isLoading } = useGetSubscriptionQuery();
   console.log(subscriptionData);
@@ -30,7 +32,14 @@ const Subscription = () => {
       status: item.status,
     }));
   }, [subscriptionData]);
-
+  const handleDeleteFaq = async (id) => {
+    try {
+      const res = await deleteSubscription(id).unwrap();
+      message.success(res?.message);
+    } catch (err) {
+      message.error(err?.data?.message);
+    }
+  };
   const columns = [
     {
       title: "#",
@@ -61,12 +70,20 @@ const Subscription = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <div>
+        <div className="flex gap-3">
           <button
             onClick={() => handleEdit(record)}
-            className="rounded text-[#AB684D]"
+            className="bg-[#D17C51] p-2 rounded text-xl text-white"
           >
-            Edit
+            <FiEdit2 />
+          </button>
+
+          {/* 🗑 Delete */}
+          <button
+            onClick={() => handleDeleteFaq(record?.key)}
+            className="bg-red-500 p-2 rounded text-xl text-white"
+          >
+            <RiDeleteBin6Line />
           </button>
         </div>
       ),

@@ -10,7 +10,8 @@ import {
 } from "../redux/api/manageApi";
 
 const BarberOwner = () => {
-  const [selectedYear, setSelectedYear] = useState("ACTIVE");
+  const [status, setStatus] = useState(""); 
+  console.log(status)
   const [searchTerm, setSearch] = useState("");
   console.log(searchTerm);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +23,7 @@ const BarberOwner = () => {
     isLoading,
     refetch,
   } = useGetBarberOwnerQuery({
-    status: selectedYear,
+    status: status,
     searchTerm: searchTerm,
     page: currentPage,
     limit: pageSize,
@@ -134,8 +135,9 @@ const BarberOwner = () => {
     },
   ];
 
-  const handleYearChange = (e) => {
-    setSelectedYear(e.target.value);
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value || ""); // Set status or clear it
+    setCurrentPage(1); // Reset to first page when status changes
   };
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -152,9 +154,8 @@ const BarberOwner = () => {
         <div className="flex justify-between items-center mb-4">
           <select
             className="rounded p-2 px-4 border border-[#C79A88] mr-11"
-            value={selectedYear}
-            onChange={handleYearChange}
-            defaultValue={''}
+            value={status}
+              onChange={handleStatusChange}
           >
             <option value="">All</option>
             <option value="ACTIVE">Active</option>

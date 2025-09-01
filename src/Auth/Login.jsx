@@ -21,7 +21,7 @@ const Login = () => {
        
         dispatch(setToken(payload?.data?.accessToken))
         message.success(payload?.message);
-        navigate("/");
+         window.location.href = "/";
       } else {
         message.error(payload?.message || "Login failed!");
       }

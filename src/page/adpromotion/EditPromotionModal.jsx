@@ -6,6 +6,7 @@ import { useUpdateAddPromotionMutation } from "../redux/api/manageApi";
 const EditPromotionModal = ({ editModal, setEditModal, selectedUser }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
+  const [existingImages, setExistingImages] = useState([]); // ✅ Track existing images
   const [updateAddPromotion] = useUpdateAddPromotionMutation();
 
   const onChange = ({ fileList: newFileList }) => setFileList(newFileList);
@@ -13,8 +14,10 @@ const EditPromotionModal = ({ editModal, setEditModal, selectedUser }) => {
   const handleCancel = () => {
     form.resetFields();
     setFileList([]);
+    setExistingImages([]);
     setEditModal(false);
   };
+
   const onPreview = async (file) => {
     let src = file.url;
     if (!src) {
@@ -30,6 +33,15 @@ const EditPromotionModal = ({ editModal, setEditModal, selectedUser }) => {
     imgWindow?.document.write(image.outerHTML);
   };
 
+
+  const handleRemove = (file) => {
+    if (file.url) {
+   
+      setExistingImages((prev) => prev.filter((img) => img !== file.url));
+    }
+    setFileList((prev) => prev.filter((f) => f.uid !== file.uid));
+  };
+
   useEffect(() => {
     if (selectedUser && editModal) {
       form.setFieldsValue({
@@ -43,7 +55,7 @@ const EditPromotionModal = ({ editModal, setEditModal, selectedUser }) => {
         description: selectedUser.title || "",
       });
 
-      setFileList(
+      const files =
         selectedUser.imageList?.map((file, index) => {
           const isVideo = file.endsWith(".mp4");
           return {
@@ -54,49 +66,52 @@ const EditPromotionModal = ({ editModal, setEditModal, selectedUser }) => {
             thumbUrl: isVideo ? "" : file,
             isVideo,
           };
-        }) || []
-      );
+        }) || [];
+
+      setFileList(files);
+      setExistingImages(selectedUser.imageList || []); // ✅ Initialize existing images
     }
   }, [selectedUser, editModal, form]);
 
-const handleSubmit = async (values) => {
-  const id = selectedUser?.key;
+  const handleSubmit = async (values) => {
+    const id = selectedUser?.key;
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    fileList.forEach((file) => {
-    
-      if (file.originFileObj) {
-        formData.append("images", file.originFileObj);
-      } 
-    });
+      // Append new files only
+      fileList.forEach((file) => {
+        if (file.originFileObj) {
+          formData.append("images", file.originFileObj);
+        }
+      });
 
-    const bodyData = {
-      startDate: values.startDate?.format("YYYY-MM-DD"),
-      endDate: values.endDate?.format("YYYY-MM-DD"),
-      duration: values.duration,
-      description: values.description,
-    };
+      const bodyData = {
+        startDate: values.startDate?.format("YYYY-MM-DD"),
+        endDate: values.endDate?.format("YYYY-MM-DD"),
+        duration: values.duration,
+        description: values.description,
+        existingImages, // ✅ updated array without removed ones
+      };
 
-    formData.append("bodyData", JSON.stringify(bodyData));
+      formData.append("bodyData", JSON.stringify(bodyData));
 
-    const res = await updateAddPromotion({ formData, id });
+      const res = await updateAddPromotion({ formData, id });
 
-    if (res) {
-      message.success(res?.data?.message);
-      form.resetFields();
-      setFileList([]);
-      setEditModal(false);
-    } else {
-      message.error(res?.data?.error || "Update failed");
+      if (res) {
+        message.success(res?.data?.message);
+        form.resetFields();
+        setFileList([]);
+        setExistingImages([]);
+        setEditModal(false);
+      } else {
+        message.error(res?.data?.error || "Update failed");
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Something went wrong!");
     }
-  } catch (error) {
-    console.error(error);
-    message.error("Something went wrong!");
-  }
-};
-
+  };
 
   return (
     <Modal
@@ -126,16 +141,41 @@ const handleSubmit = async (values) => {
             fileList={fileList}
             onChange={onChange}
             onPreview={onPreview}
+            onRemove={handleRemove}
             multiple={true}
             accept="image/*,video/*"
             itemRender={(originNode, file) => {
               if (file.isVideo) {
                 return (
-                  <video
-                    src={file.url}
-                    controls
-                    style={{ width: "100%", height: "100%", borderRadius: 8 }}
-                  />
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <video
+                      src={file.url || URL.createObjectURL(file.originFileObj)}
+                      controls
+                      style={{ width: "100%", height: "100%", borderRadius: 8 }}
+                    />
+
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: 4,
+                        right: 4,
+                        background: "rgba(0,0,0,0.5)",
+                        borderRadius: "50%",
+                        padding: "4px",
+                        cursor: "pointer",
+                        color: "white",
+                      }}
+                      onClick={() => handleRemove(file)}
+                    >
+                      ✕
+                    </span>
+                  </div>
                 );
               }
               return originNode;
@@ -162,14 +202,14 @@ const handleSubmit = async (values) => {
                 format="DD/MM/YYYY"
               />
             </Form.Item>
-            <Form.Item label="Duration" name="duration" className="mb-0">
+            {/* <Form.Item label="Duration" name="duration" className="mb-0">
               <Input
                 type="number"
                 placeholder="Duration"
                 className="w-full"
                 style={{ height: 40 }}
               />
-            </Form.Item>
+            </Form.Item> */}
           </div>
 
           {/* Description */}

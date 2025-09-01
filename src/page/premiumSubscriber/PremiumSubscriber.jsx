@@ -16,6 +16,7 @@ const PremiumSubscriber = () => {
      page: currentPage,
     limit: pageSize,
   });
+  console.log(subscriber)
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };

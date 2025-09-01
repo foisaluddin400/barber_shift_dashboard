@@ -121,14 +121,14 @@ const AddPromotionModal = ({ openAddModal, setOpenAddModal }) => {
                 style={{ height: 40 }}
               />
             </Form.Item>
-            <Form.Item label="Duration" name="duration" className="mb-0">
+            {/* <Form.Item label="Duration" name="duration" className="mb-0">
               <Input
                 type="number"
                 placeholder="Duration"
                 className="w-full"
                 style={{ height: 40 }}
               />
-            </Form.Item>
+            </Form.Item> */}
           </div>
 
           {/* Description */}

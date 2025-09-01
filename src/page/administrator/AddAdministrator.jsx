@@ -11,17 +11,22 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
   const [imagePreview, setImagePreview] = useState(null);
   const [checkedList, setCheckedList] = useState([]);
   const [file, setFile] = useState(null);
-  const [role, setRole] = useState(null); // ✅ selected role
+  const [role, setRole] = useState(null); // Selected role
 
   const { data: accessCheckFunctionData } = useGetAllAccessFunctionsQuery();
-  console.log(accessCheckFunctionData)
   const [AddAdminProvide] = useAddAdminProvideMutation();
 
+  // Original access options from API
   const accessOptions =
     accessCheckFunctionData?.data?.map((item) => ({
       label: item.function,
       value: item.id,
     })) || [];
+
+  // Filtered access options based on role
+  const filteredAccessOptions = role === "ADMIN"
+    ? accessOptions.filter((option) => option.label !== "ADMIN_MANAGEMENT")
+    : accessOptions;
 
   // Modal Cancel
   const handleCancel = () => {
@@ -68,40 +73,34 @@ const AddAdministrator = ({ openAddModal, setOpenAddModal }) => {
     }
   };
 
-  // ✅ Role change
   const handleRoleChange = (value) => {
     setRole(value);
 
     if (value === "SUPER_ADMIN") {
-  
       setCheckedList(accessOptions.map((o) => o.value));
     } else {
- 
       setCheckedList([]);
     }
   };
 
+  const handleCheckboxGroupChange = (list) => {
+    if (role === "ADMIN") {
+      // Find the "ALL" value from filteredAccessOptions
+      const allOption = filteredAccessOptions.find((o) => o.label === "ALL")?.value;
 
-const handleCheckboxGroupChange = (list) => {
-  if (role === "ADMIN") {
-    // Find the "ALL" value from accessOptions (case-sensitive match with data)
-    const allOption = accessOptions.find((o) => o.label === "ALL")?.value;
-
-    // If the "ALL" checkbox is selected
-    if (allOption && list.includes(allOption)) {
-      // Select all options
-      setCheckedList(accessOptions.map((o) => o.value));
+      // If the "ALL" checkbox is selected
+      if (allOption && list.includes(allOption)) {
+        // Select all filtered options
+        setCheckedList(filteredAccessOptions.map((o) => o.value));
+      } else {
+        // Otherwise, set only the selected items
+        setCheckedList(list);
+      }
     } else {
-      // Otherwise, set only the selected items
+      // For non-ADMIN roles, just update the checked list
       setCheckedList(list);
     }
-  } else {
-    // For non-ADMIN roles, just update the checked list
-    setCheckedList(list);
-  }
-};
-
-
+  };
 
   return (
     <Modal
@@ -195,7 +194,7 @@ const handleCheckboxGroupChange = (list) => {
           </label>
           <div className="grid grid-cols-2 mt-2">
             <Checkbox.Group
-              options={accessOptions}
+              options={filteredAccessOptions} // Use filtered options
               value={checkedList}
               onChange={handleCheckboxGroupChange}
               disabled={role === "SUPER_ADMIN"}
