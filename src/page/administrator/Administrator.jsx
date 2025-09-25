@@ -1,4 +1,12 @@
-import { Table, Input, Space, Tooltip, Select, message, Pagination } from "antd";
+import {
+  Table,
+  Input,
+  Space,
+  Tooltip,
+  Select,
+  message,
+  Pagination,
+} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { Navigate } from "../../Navigate";
 import { useState } from "react";
@@ -6,32 +14,35 @@ import AddAdministrator from "./AddAdministrator";
 import EditAdministrator from "./EditAdministrator";
 import { FiEdit2 } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { useDeleteAdminAccessMutation, useGetAllAdminAccessQuery } from "../redux/api/manageApi";
+import {
+  useDeleteAdminAccessMutation,
+  useGetAllAdminAccessQuery,
+} from "../redux/api/manageApi";
 
 const { Option } = Select;
 
 const Administrator = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-const [deleteUser] = useDeleteAdminAccessMutation()
+  const [deleteUser] = useDeleteAdminAccessMutation();
   const [searchTerm, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-console.log(searchTerm)
+  console.log(searchTerm);
   const { data: adminData, isLoading } = useGetAllAdminAccessQuery({
     searchTerm,
     page: currentPage,
     limit: pageSize,
   });
   console.log("Admin Data:", adminData);
- const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const handleEdit = (record) => {
     setSelectedUser(record);
     setEditModal(true);
   };
 
-    const handleDeleteFaq = async (id) => {
-      console.log(id)
+  const handleDeleteFaq = async (id) => {
+    console.log(id);
     try {
       const res = await deleteUser(id).unwrap();
       message.success(res?.message);
@@ -76,13 +87,7 @@ console.log(searchTerm)
       dataIndex: "access",
       key: "access",
       render: (accesses) => (
-        <Select
-          mode="multiple"
-          value={accesses}
-          style={{ width: 200, }}
-          
-         
-        >
+        <Select mode="multiple" value={accesses} style={{ width: 200 }}>
           {accesses.map((acc) => (
             <Option key={acc} value={acc}>
               {acc}
@@ -105,7 +110,10 @@ console.log(searchTerm)
             </button>
           </Tooltip>
           <Tooltip title="Delete">
-            <button onClick={() => handleDeleteFaq(record?.key)} className="bg-red-500 p-2 rounded text-xl text-white">
+            <button
+              onClick={() => handleDeleteFaq(record?.key)}
+              className="bg-red-500 p-2 rounded text-xl text-white"
+            >
               <RiDeleteBin6Line />
             </button>
           </Tooltip>
@@ -162,22 +170,26 @@ console.log(searchTerm)
         />
       </div>
 
-         <div className="mt-4 flex justify-center">
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={adminData?.meta?.total || 0}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
-        </div>
+      <div className="mt-4 flex justify-center">
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={adminData?.meta?.total || 0}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+        />
+      </div>
 
       {/* Modals */}
       <AddAdministrator
         setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}
       />
-      <EditAdministrator editModal={editModal} setEditModal={setEditModal} selectedUser={selectedUser}/>
+      <EditAdministrator
+        editModal={editModal}
+        setEditModal={setEditModal}
+        selectedUser={selectedUser}
+      />
     </div>
   );
 };
