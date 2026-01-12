@@ -7,10 +7,10 @@ import { useGetAllReportsQuery } from "../redux/api/manageApi";
 
 const UserReport = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
-   const [searchTerm, setSearch] = useState("");
+  const [searchTerm, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-console.log(searchTerm)
+  console.log(searchTerm);
   const [selectedUser, setSelectedUser] = useState(null);
   console.log(selectedUser);
   // API Call
@@ -98,7 +98,7 @@ console.log(searchTerm)
           >
             Reply
           </button>
-{/* 
+          {/* 
           <Popconfirm
             title="Are you sure you want to delete this category?"
             onConfirm={() => handleDeleteCategory(record?.key)}
@@ -127,7 +127,7 @@ console.log(searchTerm)
           placeholder="Search"
           prefix={<SearchOutlined />}
           className="w-64 px-4 py-2 rounded-lg bg-white"
-         onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
@@ -143,15 +143,15 @@ console.log(searchTerm)
           />
         </div>
       </div>
-   <div className="mt-4 flex justify-center">
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={reportData?.meta?.total || 0}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
-        </div>
+      <div className="mt-4 flex justify-center">
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={reportData?.meta?.total || 0}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+        />
+      </div>
       <ReplyUser
         setOpenAddModal={setOpenAddModal}
         openAddModal={openAddModal}

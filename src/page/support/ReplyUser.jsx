@@ -6,7 +6,7 @@ const ReplyUser = ({ openAddModal, setOpenAddModal, selectedUser }) => {
   console.log(selectedUser);
   const [form] = Form.useForm();
   const handleCancel = () => {
-    form.resetFields();
+  
 
     setOpenAddModal(false);
   };
@@ -59,11 +59,16 @@ const handleSubmit = async (values) => {
           {/* Buttons */}
           <div className="flex gap-3 mt-3">
             <button
-              type="submit"
-              className="px-4 py-3 w-full bg-[#D17C51] text-white rounded-md"
-            >
-              Reply
-            </button>
+  type="submit"
+  disabled={!!selectedUser?.message}
+  className={`px-4 py-3 w-full rounded-md text-white 
+    ${selectedUser?.message
+      ? "bg-gray-400 cursor-not-allowed" 
+      : "bg-[#D17C51]"}`}
+>
+  Reply
+</button>
+
             <button
               type="button"
               className="px-4 py-3 w-full bg-[#D9000A] text-white rounded-md"

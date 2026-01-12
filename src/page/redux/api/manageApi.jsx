@@ -155,7 +155,7 @@ const businessApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: ["updateProfile"],
+    
     }),
 
     getSingleSupport: builder.query({

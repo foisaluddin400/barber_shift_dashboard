@@ -15,8 +15,7 @@ const ReplyUser = ({ openAddModal, setOpenAddModal, selectedUser }) => {
   console.log(singleReply);
   const [replyUser] = useReplyUserMutation();
   const handleCancel = () => {
-    form.resetFields();
-
+   
     setOpenAddModal(false);
   };
   useEffect(() => {
@@ -65,11 +64,16 @@ const ReplyUser = ({ openAddModal, setOpenAddModal, selectedUser }) => {
           </Form.Item>
           <div className="flex gap-3 mt-3">
             <button
-              type="submit"
-              className="px-4 py-3 w-full bg-[#D17C51] text-white rounded-md"
-            >
-              Reply
-            </button>
+  type="submit"
+  disabled={!!singleReply?.data?.message}
+  className={`px-4 py-3 w-full rounded-md text-white 
+    ${singleReply?.data?.message 
+      ? "bg-gray-400 cursor-not-allowed" 
+      : "bg-[#D17C51]"}`}
+>
+  Reply
+</button>
+
             <button
               type="button"
               className="px-4 py-3 w-full bg-[#D9000A] text-white rounded-md"
