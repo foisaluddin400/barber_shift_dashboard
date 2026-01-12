@@ -26,7 +26,7 @@ export const Barber = () => {
   const tableData = useMemo(() => {
     if (!barbersData?.data) return [];
     return barbersData.data.map((item, index) => ({
-      key: item.userId || index,
+      key: item.userId,
       id: index + 1,
       barberName: item.fullName,
       avatar:
@@ -38,6 +38,7 @@ export const Barber = () => {
       status: item.status,
     }));
   }, [barbersData]);
+  
 
   const columns = [
     {

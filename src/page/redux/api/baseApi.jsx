@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://barber-shift-app-4n3k.vercel.app/api/v1",
+  baseUrl: "http://10.10.20.26:8080/api/v1",
   // prepareHeaders: (headers) => {
   //   const token = JSON.parse(localStorage.getItem("accessToken"));
   //   if (token) {
@@ -26,5 +26,5 @@ export const baseApi = createApi({
   endpoints: () => ({}),
 });
 
-export const imageUrl = "https://barber-shift-app-4n3k.vercel.app/api/v1";
+export const imageUrl = "http://10.10.20.26:8080/api/v1";
 // asdfsf

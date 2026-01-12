@@ -23,6 +23,18 @@ const businessApi = baseApi.injectEndpoints({
       providesTags: ["updateProfile"],
     }),
 
+
+    
+    getRegisterBarberOwner: builder.query({
+      query: () => {
+        return {
+          url: `/admin/saloons`,
+          method: "GET",
+        };
+      },
+      providesTags: ["updateProfile"],
+    }),
+
     getSingleBarberOwner: builder.query({
       query: ({ id }) => {
         return {
@@ -435,6 +447,8 @@ const businessApi = baseApi.injectEndpoints({
 
 export const {
   useGetBarberOwnerQuery,
+  useGetRegisterBarberOwnerQuery,
+  
   useGetSingleReplyQuery,
   useBlockOwnerMutation,
   useGetAllReportsQuery,

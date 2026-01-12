@@ -40,11 +40,11 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen grid grid-cols-2 bg-[#F7F0ED]">
+    <div className="min-h-screen lg:grid grid-cols-2 bg-[#F7F0ED]">
      
       <div className=" min-h-screen flex items-center justify-center">
         <div className="">
-        <div className=" md:px-16 px-5 py-16  w-[600px] rounded">
+        <div className=" md:px-16 px-5 py-16  lg:w-[600px] rounded">
           <div className="text-center">
           <h2 className="text-2xl font-bold mb-2 text-gray-800">
           Login to Account
@@ -121,8 +121,10 @@ const Login = () => {
         </div>
         </div>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="hidden lg:block">
+        <div className="flex justify-center items-center">
         <img className="h-screen w-full" src={img} alt="" />
+      </div>
       </div>
     </div>
     
