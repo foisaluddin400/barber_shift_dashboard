@@ -42,7 +42,7 @@ const Verify = () => {
   //   }
   // };
   return (
-    <div className="min-h-screen grid grid-cols-2 bg-[#F7F0ED]">
+    <div className="min-h-screen md:grid grid-cols-2 bg-[#F7F0ED]">
       
       <div className=" min-h-screen flex items-center justify-center">
         <div className="">
@@ -89,8 +89,10 @@ const Verify = () => {
           </div>
         </div>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="hidden md:block">
+        <div className="flex justify-center items-center">
         <img className="h-screen w-full" src={img} alt="" />
+      </div>
       </div>
     </div>
   );

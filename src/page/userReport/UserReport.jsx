@@ -115,8 +115,8 @@ const UserReport = () => {
   ];
 
   return (
-    <div className="p-1">
-      <div className="flex justify-between">
+    <div className="bg-white p-3 h-[87vh]">
+      <div className="md:flex justify-between">
         <div className="flex">
           <Navigate title={"User Report"} />
           <h1 className="pl-2 font-semibold text-xl">

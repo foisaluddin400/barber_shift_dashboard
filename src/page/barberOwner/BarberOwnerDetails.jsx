@@ -15,7 +15,7 @@ export const BarberOwnerDetails = () => {
   console.log(singleBarber)
   console.log(id)
   return (
-    <div className="p-1">
+    <div className="bg-white p-3 h-[87vh]">
       <div>
         <Navigate title={"Clients > Barber Time"}></Navigate>
       </div>

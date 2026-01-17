@@ -129,13 +129,11 @@ const handleBlockToggle = async (record, checked) => {
   };
 
   return (
-    <div className="p-1">
-      <div className="flex justify-between">
+    <div className="bg-white p-3 h-[87vh]">
+      <div className="md:flex justify-between">
         <div className="flex ">
           <Navigate title={"Customers"} />
-          <h1 className=" pl-2 font-semibold text-xl">
-            {`(${customerData?.meta?.total || 0})`}
-          </h1>
+         
         </div>
         <Input
          onChange={(e) => setSearch(e.target.value)}

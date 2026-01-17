@@ -138,9 +138,9 @@ const Administrator = () => {
     })) || [];
 
   return (
-    <div className="p-1">
+    <div className="bg-white p-3 h-[87vh]">
       {/* Header with search */}
-      <div className="flex justify-between mb-4">
+      <div className="md:flex justify-between mb-4">
         <Navigate title={"Administrator"} />
         <Input
           onChange={(e) => setSearch(e.target.value)}
@@ -166,7 +166,7 @@ const Administrator = () => {
           loading={isLoading}
           pagination={false}
           rowClassName="border-b border-gray-200"
-          scroll={{ x: 900 }}
+          scroll={{ x: 500 }}
         />
       </div>
 

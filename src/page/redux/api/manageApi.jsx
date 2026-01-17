@@ -155,7 +155,6 @@ const businessApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-    
     }),
 
     getSingleSupport: builder.query({

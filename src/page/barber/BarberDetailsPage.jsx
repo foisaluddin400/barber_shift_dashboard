@@ -18,7 +18,7 @@ const BarberDetailsPage = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-2">
       {/* Back Button & Title */}
       <Navigate title={"Barber Details"} />
 

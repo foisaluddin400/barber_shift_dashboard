@@ -95,8 +95,8 @@ const Support = () => {
   ];
 
   return (
-    <div className="p-3 bg-white mt-4">
-      <div className="flex justify-between mb-4">
+    <div className="bg-white p-3 h-[87vh]">
+      <div className="md:flex justify-between mb-4">
         <Navigate title={"Support"} />
         <Input
           placeholder="Search"

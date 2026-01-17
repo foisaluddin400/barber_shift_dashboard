@@ -11,7 +11,7 @@ const AdPromotional = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="md:flex justify-between">
         <div className="flex ">
           <Navigate title={"Ad Promotion"}></Navigate>
     
@@ -27,24 +27,13 @@ const AdPromotional = () => {
       <div className="flex gap-4">
         <div
           onClick={() => setSelectedTab("personal")}
-          className={` py-2 px-5 border rounded border-[#D17C51]  cursor-pointer ${
-            selectedTab === "personal" ? " bg-[#D17C51] text-white  " : " "
+          className={` py-2 px-5  cursor-pointer ${
+            selectedTab === "personal" ? "  text-white  " : " "
           }`}
         >
-          <div className="flex justify-between px-5">
-            <span className="flex gap-2">Ads</span>
-          </div>
+  
         </div>
-        {/* <div
-          onClick={() => setSelectedTab("photo")}
-          className={` py-2 px-5 border rounded border-[#D17C51]  cursor-pointer ${
-            selectedTab === "photo" ? "bg-[#D17C51] text-white " : " "
-          }`}
-        >
-          <div className="flex justify-between px-5">
-            <span className="flex gap-2">Videos</span>
-          </div>
-        </div> */}
+        
       </div>
       {selectedTab === "personal" && (
         <div>

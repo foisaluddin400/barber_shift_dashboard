@@ -81,8 +81,8 @@ export const Barber = () => {
   ];
 
   return (
-    <div className="p-1">
-      <div className="flex justify-between">
+    <div className="bg-white p-3 h-[87vh]">
+      <div className="md:flex justify-between">
         <div className="flex">
           <Navigate title={"Barbers"} />
           <h1 className="pl-2 font-semibold text-xl">

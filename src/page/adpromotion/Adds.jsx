@@ -137,7 +137,7 @@ const Adds = () => {
   ];
 
   return (
-    <div className="p-4">
+    <div className="bg-white p-3 h-[87vh]">
       <Table
         columns={columns}
         dataSource={formattedData}
