@@ -32,6 +32,7 @@ import AllShopRegistration from "../components/Dashboard/AllShopRegistration";
 import Support from "../page/support/Support";
 import ProtectedRoute from "../protectedRoute/ProtectedRoute";
 import AdminProtect from "../protectedRoute/AdminProtect";
+import Test from "../page/test/Test";
 
 
 
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/barberOwner",
         element: <BarberOwner></BarberOwner>
+      },
+      {
+        path: "/test",
+        element: <Test></Test>
       },
       {
         path: "/dashboard/allShop",
