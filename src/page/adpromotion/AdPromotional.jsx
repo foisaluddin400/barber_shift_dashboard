@@ -31,7 +31,6 @@ const AdPromotional = () => {
             selectedTab === "personal" ? "  text-white  " : " "
           }`}
         >
-  
         </div>
         
       </div>
